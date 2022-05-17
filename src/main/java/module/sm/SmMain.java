@@ -1,5 +1,6 @@
 package module.sm;
 
+import constant.ConstantScreen;
 import models.*;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -7,6 +8,8 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 import utils.ImShow;
+import utils.ImageProcessingUtil;
+import utils.ScreenUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -38,47 +41,9 @@ public class SmMain {
 //    private static final int ROOT_X = 763;
 //    private static final int ROOT_Y = 112;
 
-    private static final int ROOT_X = 753;
-    private static final int ROOT_Y = 102;
 
-    /**
-     * 继续任务
-     */
-    private static final int SHOT_X_CONTINUE_TASK = ROOT_X + 384;
-    private static final int SHOT_Y_CONTINUE_TASK = ROOT_Y + 467;
-    private static final int CONTINUE_TASK_WIDTH = 112;
-    private static final int CONTINUE_TASK_HEIGHT = 15;
 
-    /**
-     * 抓宠物
-     */
-    private static final int SHOT_X_CATCH_PET = ROOT_X + 801;
-    private static final int SHOT_Y_CATCH_PET = ROOT_Y + 184;
-    private static final int CATCH_PET_WIDTH = 120;
-    private static final int CATCH_PET_OK_WIDTH = 161;
-    private static final int CATCH_PET_HEIGHT = 15;
 
-    /**
-     * 收集物资
-     */
-    private static final int SHOT_X_COLLECT_MATERIALS = ROOT_X + 801;
-    private static final int SHOT_Y_COLLECT_MATERIALS = ROOT_Y + 184;
-    private static final int COLLECT_MATERIALS_WIDTH = 120;
-    private static final int COLLECT_MATERIALS_OK_WIDTH = 161;
-    private static final int COLLECT_MATERIALS_HEIGHT = 15;
-
-    /**
-     * 挑战
-     */
-    private static final int SHOT_X_CHALLENGE = ROOT_X + 805;
-    private static final int SHOT_Y_CHALLENGE = ROOT_Y + 186;
-//    private static final int CHALLENGE_WIDTH = 161;
-//    private static final int CHALLENGE_OK_WIDTH = 161;
-//    private static final int CHALLENGE_HEIGHT = 15;
-
-    private static final int CHALLENGE_WIDTH = 161;
-    private static final int CHALLENGE_OK_WIDTH = 161;
-    private static final int CHALLENGE_HEIGHT = 25;
 
     /**
      * catch pet
@@ -112,6 +77,19 @@ public class SmMain {
     }
 
     public SmMain() {
+    }
+
+    /**
+     * 开始做师门
+     */
+    public static void start(){
+        ScreenUtil.getScreenShot(ConstantScreen.SHOT_X_CHALLENGE, ConstantScreen.SHOT_Y_CHALLENGE, ConstantScreen.CHALLENGE_WIDTH, ConstantScreen.CHALLENGE_HEIGHT,null);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        ImageProcessingUtil.compareImage(DIR_RES + "buffer/screenshot.jpg",DIR_RES + "source/collect_materials.jpg");
     }
 
     public static void moveMouse(int x, int y) {
@@ -156,9 +134,9 @@ public class SmMain {
     }
 
     public static void compareWithLocalSm(){
-        BufferedImage image = getSpecifiedScreenImage(SHOT_X_CHALLENGE, SHOT_Y_CHALLENGE, CHALLENGE_WIDTH, CHALLENGE_HEIGHT);
+//        BufferedImage image = getSpecifiedScreenImage(SHOT_X_CHALLENGE, SHOT_Y_CHALLENGE, CHALLENGE_WIDTH, CHALLENGE_HEIGHT);
         int oldPercent = 0;
-        imageToText();
+//        imageToText();
 //        System.out.println("start>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 //
 //        System.out.println("catch pet percentage:%" + compareImage(mCatchPetImg, image));
@@ -512,28 +490,7 @@ public class SmMain {
         return bufferedImage;
     }
 
-    /**
-     * 获取屏幕坐标
-     */
-    public static void getPointInfo() {
-        int x = 0;
-        int y = 0;
-        while (true) {
-            PointerInfo pinfo = MouseInfo.getPointerInfo();
-            int mx = pinfo.getLocation().x;
-            int my = pinfo.getLocation().y;
-            if (x != mx || y != my) {
-                x = mx;
-                y = my;
-                System.out.println("x:" + mx + ",y:" + my);
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
+
 
     /**
      * 求出图像处理阈值

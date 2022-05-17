@@ -1,4 +1,4 @@
-package utils.constant;
+package constant;
 
 import java.awt.event.KeyEvent;
 import java.util.*;

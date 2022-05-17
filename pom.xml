@@ -21,7 +21,6 @@
         </plugins>
     </build>
     <modules>
-        <module>swpluginapp</module>
     </modules>
 
     <dependencies>
@@ -31,13 +30,21 @@
                 <version>3.4.8</version>
         </dependency>
 
-        <!--引用本地ai算法-->
-<!--        <dependency>-->
-<!--            <groupId>com.niulib.aisdk</groupId>-->
-<!--            <artifactId>niulib-aisdk-noise</artifactId>-->
-<!--            <version>1.0</version>-->
-<!--            <systemPath>${project.basedir}/lib/niulib-aisdk-noise.jar</systemPath>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacpp</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco.javacpp-presets</groupId>
+            <artifactId>opencv-platform</artifactId>
+            <version>3.4.1-1.4.1</version>
+        </dependency>
     </dependencies>
 
 
