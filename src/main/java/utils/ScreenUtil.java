@@ -1,5 +1,7 @@
 package utils;
 
+import module.sm.SmMain;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -55,7 +57,7 @@ public class ScreenUtil {
             if(path !=null && !path.isEmpty()){
                 ImageIO.write(bufferedImage, "jpg", new File(DIR_RES + path));
             }
-            ImageIO.write(bufferedImage, "jpg", new File(DIR_RES + "buffer/screenshot.jpg"));
+            ImageIO.write(ImageProcessingUtil.optImage(bufferedImage), "jpg", new File(DIR_RES + "buffer/screenshot.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }

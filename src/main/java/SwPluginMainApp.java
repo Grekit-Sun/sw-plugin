@@ -29,7 +29,7 @@ public class SwPluginMainApp {
     /**
      * 获取屏幕坐标点
      */
-    private static boolean mIsShowCurrentPoint = true;
+    private static boolean mIsShowCurrentPoint = false;
 
     private static Random mRandom = new Random();
     private static final int INTERVAL_SPEAK = 50;
