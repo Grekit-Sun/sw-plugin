@@ -11,6 +11,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Random;
 
+import static org.opencv.core.Core.NATIVE_LIBRARY_NAME;
+
 /**
  * Description：
  *
@@ -25,12 +27,10 @@ public class Test1 {
     private static Random mRandom = new Random();
     private static final int INTERVAL_SPEAK = 50;
 
-    // Paper url: https://www.robots.ox.ac.uk/~vgg/rg/papers/hazeremoval.pdf
-    private static final double krnlRatio = 0.01; // set kernel ratio
-    private static final double minAtmosLight = 240.0; // set minimum atmospheric light
-    private static final double eps = 0.000001;
+
 
     public static void main(String[] args) {
+        System.loadLibrary(NATIVE_LIBRARY_NAME);
         ThreadPoolUtil.getInstance().execute(new Runnable() {
             @Override
             public void run() {
@@ -49,7 +49,7 @@ public class Test1 {
             @Override
             public void run() {
 //                SmMain.compareImage();
-                SmMain.getPointInfo();
+//                SmMain.getPointInfo();
             }
         });
 
@@ -57,6 +57,7 @@ public class Test1 {
         ThreadPoolUtil.getInstance().execute(new Runnable() {
             @Override
             public void run() {         //做师门
+//                    SmMain.moveMouse(460 + mRandom.nextInt(100), 480 + mRandom.nextInt(100));
                 while (mIsDoSm) {
                     try {
                         Thread.sleep(2000);
@@ -64,12 +65,7 @@ public class Test1 {
                         e.printStackTrace();
                     }
                     SmMain.compareWithLocalSm();
-                    String imgPath = "src/main/resources/haze_images/train.bmp";
-                    Mat image = Imgcodecs.imread(imgPath, Imgcodecs.IMREAD_COLOR);
-                    new ImShow("Original").showImage(image);
-                    Mat result = DarkChannelPriorDehaze.enhance(image, krnlRatio, minAtmosLight, eps);
-                    new ImShow("Dehazing").showImage(result);
-//                    SmMain.moveMouse(460 + mRandom.nextInt(100), 480 + mRandom.nextInt(100));
+
                 }
             }
         });

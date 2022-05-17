@@ -1,15 +1,28 @@
 package module.sm;
 
+import models.*;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.imgcodecs.Imgcodecs;
+import utils.ImShow;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static org.opencv.core.CvType.CV_8UC3;
+import static org.opencv.imgproc.Imgproc.COLOR_RGB2BGR;
+import static org.opencv.imgproc.Imgproc.cvtColor;
 
 
 /**
@@ -22,8 +35,11 @@ public class SmMain {
     private static Robot mRobot;
     private static final String DIR_RES = "/Users/sun/dev/00_IDEA/workspace/sw-plugin/src/main/resources/";
 
-    private static final int ROOT_X = 573;
-    private static final int ROOT_Y = 96;
+//    private static final int ROOT_X = 763;
+//    private static final int ROOT_Y = 112;
+
+    private static final int ROOT_X = 753;
+    private static final int ROOT_Y = 102;
 
     /**
      * 继续任务
@@ -56,9 +72,13 @@ public class SmMain {
      */
     private static final int SHOT_X_CHALLENGE = ROOT_X + 805;
     private static final int SHOT_Y_CHALLENGE = ROOT_Y + 186;
+//    private static final int CHALLENGE_WIDTH = 161;
+//    private static final int CHALLENGE_OK_WIDTH = 161;
+//    private static final int CHALLENGE_HEIGHT = 15;
+
     private static final int CHALLENGE_WIDTH = 161;
     private static final int CHALLENGE_OK_WIDTH = 161;
-    private static final int CHALLENGE_HEIGHT = 15;
+    private static final int CHALLENGE_HEIGHT = 25;
 
     /**
      * catch pet
@@ -119,7 +139,12 @@ public class SmMain {
         try {
             Thread.sleep(1000);
             long startTime = System.currentTimeMillis();
-             resText = tesseract.doOCR(new File(DIR_RES + "cutImage/screenshot.jpg"));
+             resText = tesseract.doOCR(dehaze(mCatchPetImg));
+            try {
+                ImageIO.write(dehaze(mCatchPetImg), "jpg", new File(DIR_RES + "cutImage/screenshot.jpg"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             // 输出识别结果
             System.out.println("识别结果: \n" + resText + "\n 耗时：" + (System.currentTimeMillis() - startTime) + "ms");
         } catch (TesseractException e) {
@@ -171,11 +196,12 @@ public class SmMain {
         }
         //表示截取以（150，500）为坐上顶点的，200px*200px大小的图
         BufferedImage bufferedImage = mRobot.createScreenCapture(new Rectangle(x, y, width, height));
-        try {
-            ImageIO.write(denoise(bufferedImage), "jpg", new File(DIR_RES + "cutImage/screenshot.jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+////            ImageIO.write(denoise(bufferedImage), "jpg", new File(DIR_RES + "cutImage/screenshot.jpg"));
+////            ImageIO.write(dehaze(bufferedImage), "jpg", new File(DIR_RES + "cutImage/screenshot.jpg"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         return bufferedImage;
     }
 
@@ -590,5 +616,67 @@ public class SmMain {
             return true;
         }
         return false;
+    }
+
+    private static  BufferedImage matToBufferImage(Mat mat){
+        //编码图像
+        MatOfByte matOfByte = new MatOfByte();
+        boolean isEncodeOk = Imgcodecs.imencode(".jpg", mat, matOfByte);
+//        System.out.println("isEncodeOk:" + isEncodeOk);
+        //将编码的Mat存储在字节数组中
+        byte[] byteArray = matOfByte.toArray();
+        //准备缓冲图像
+        InputStream in = new ByteArrayInputStream(byteArray);
+        BufferedImage bufImage = null;
+        try {
+            bufImage = ImageIO.read(in);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return bufImage;
+    }
+
+    private static final int blkSize = 10 * 10;
+    private static final int patchSize = 8;
+    private static final double lambda = 10;
+    private static final double gamma = 1.7;
+    private static final int r = 10;
+    private static final double eps = 1e-6;
+    private static final int level = 5;
+    private static BufferedImage dehaze(BufferedImage image){
+        BufferedImage rgBformat = converttoRGBformat(image);
+        byte[] image_rgb = (byte[]) rgBformat.getData().getDataElements(0, 0, rgBformat.getWidth(), rgBformat.getHeight(), null);
+        Mat bimg1_mat;
+        bimg1_mat = new Mat(rgBformat.getHeight(), rgBformat.getWidth(), CV_8UC3);
+//        String imgPath = "/Users/sun/dev/00_IDEA/workspace/sw-plugin/src/main/resources/source/catch_pet.jpg";
+//        Mat image = Imgcodecs.imread(imgPath, Imgcodecs.IMREAD_COLOR);
+//        new ImShow("Original").showImage(image);
+//        Mat result = DarkChannelPriorDehaze.enhance(bimg1_mat, krnlRatio, minAtmosLight, eps);
+        Mat result = RemoveBackScatter.enhance(bimg1_mat, blkSize, patchSize, lambda, gamma, r, eps, level);
+        return matToBufferImage(result);
+    }
+
+    /**
+     * BufferedImage均转为TYPE_3BYTE_BGR，RGB格式
+     *
+     * @param input 未知格式BufferedImage图片
+     * @return TYPE_3BYTE_BGR格式的BufferedImage图片
+     */
+    public static BufferedImage converttoRGBformat(BufferedImage input)
+    {
+        if (null == input)
+        {
+            throw new NullPointerException("BufferedImage input can not be null!");
+        }
+        if (BufferedImage.TYPE_3BYTE_BGR != input.getType())
+        {
+            BufferedImage input_rgb = new BufferedImage(input.getWidth(), input.getHeight(),
+                    BufferedImage.TYPE_3BYTE_BGR);
+            new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_sRGB), null).filter(input, input_rgb);
+            return input_rgb;
+        } else
+        {
+            return input;
+        }
     }
 }
