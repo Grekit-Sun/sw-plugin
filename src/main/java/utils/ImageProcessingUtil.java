@@ -1,5 +1,6 @@
 package utils;
 
+import bean.SwPointBean;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.opencv.core.*;
@@ -20,33 +21,41 @@ public class ImageProcessingUtil {
      * 模板匹配
      * RE：https://blog.csdn.net/datouniao1/article/details/108449562
      */
-    public static void matchTemplate(String targetImagePath , String baseImagePath){
+    public static SwPointBean matchTemplate(String targetImagePath, String baseImagePath) {
+        SwPointBean pointBean = new SwPointBean();
         Mat src_1 = Imgcodecs.imread(targetImagePath);// 图片 1
         Mat src_2 = Imgcodecs.imread(baseImagePath);// 图片 2
-        Mat result=new Mat();
-        int method=Imgproc.TM_CCOEFF;
-        Imgproc.matchTemplate(src_2,src_1,result,Imgproc.TM_CCOEFF);
+        Mat result = new Mat();
+        int method = Imgproc.TM_CCOEFF;
+        Imgproc.matchTemplate(src_2, src_1, result, Imgproc.TM_CCOEFF);
         Core.MinMaxLocResult result_m = Core.minMaxLoc(result);//取最大值和最小值
         Point maxloc = result_m.maxLoc;
         Point minloc = result_m.minLoc;
-        System.out.println("minloc:" + minloc.toString() + "  maxloc:" +maxloc.toString());
+        System.out.println("minloc:" + minloc.toString() + "  maxloc:" + maxloc.toString());
         //获取坐标
-        Point p1 ;
+        Point p1;
         //如果是平方不同或者归一化平方不同,那么就取最小值
         p1 = (method == Imgproc.TM_SQDIFF || method == Imgproc.TM_SQDIFF_NORMED) ? minloc : maxloc;
 
-        Point p2 = new Point(p1.x+src_1.cols(),p1.y+src_1.rows());
+        Point p2 = new Point(p1.x + src_1.cols(), p1.y + src_1.rows());
 
         //绘制
-        Imgproc.rectangle(src_2,p1,p2,new Scalar(0,0,255));
-
-        HighGui.imshow("原图",src_2);
-        HighGui.imshow("模板",src_1);
-        HighGui.waitKey(10);
+//        Imgproc.rectangle(src_2, p1, p2, new Scalar(0, 0, 255));
+//        System.out.println("矩阵顶点:" + p1.toString() + "  矩阵顶点:" + p2.toString());
+//
+//        HighGui.imshow("原图", src_2);
+//        HighGui.imshow("模板", src_1);
+//        HighGui.waitKey(10);
+////
+        pointBean.x = (int)p1.x;
+        pointBean.y = (int)p1.y;
+        pointBean.width = src_1.cols();
+        pointBean.heigt = src_1.rows();
+        return pointBean;
     }
 
-    public static double compareImage(String targetImagePath , String baseImagePath){
-        return compareHist_2(targetImagePath,baseImagePath);
+    public static double compareImage(String targetImagePath, String baseImagePath) {
+        return compareHist_2(targetImagePath, baseImagePath);
     }
 
     /**
@@ -55,30 +64,30 @@ public class ImageProcessingUtil {
      * @return: void
      * @date: 2020年1月14日20:15:39
      */
-    public static double compareHist_2(String targetImagePath , String baseImagePath) {
+    public static double compareHist_2(String targetImagePath, String baseImagePath) {
         Mat src_1 = Imgcodecs.imread(targetImagePath);// 图片 1
         Mat src_2 = Imgcodecs.imread(baseImagePath);// 图片 2
 
         Mat hvs_1 = new Mat();
         Mat hvs_2 = new Mat();
         //图片转HSV
-        Imgproc.cvtColor(src_1, hvs_1,Imgproc.COLOR_BGR2HSV);
-        Imgproc.cvtColor(src_2, hvs_2,Imgproc.COLOR_BGR2HSV);
+        Imgproc.cvtColor(src_1, hvs_1, Imgproc.COLOR_BGR2HSV);
+        Imgproc.cvtColor(src_2, hvs_2, Imgproc.COLOR_BGR2HSV);
 
         Mat hist_1 = new Mat();
         Mat hist_2 = new Mat();
 
         //直方图计算
-        Imgproc.calcHist(Stream.of(hvs_1).collect(Collectors.toList()),new MatOfInt(0),new Mat(),hist_1,new MatOfInt(255) ,new MatOfFloat(0,256));
-        Imgproc.calcHist(Stream.of(hvs_2).collect(Collectors.toList()),new MatOfInt(0),new Mat(),hist_2,new MatOfInt(255) ,new MatOfFloat(0,256));
+        Imgproc.calcHist(Stream.of(hvs_1).collect(Collectors.toList()), new MatOfInt(0), new Mat(), hist_1, new MatOfInt(255), new MatOfFloat(0, 256));
+        Imgproc.calcHist(Stream.of(hvs_2).collect(Collectors.toList()), new MatOfInt(0), new Mat(), hist_2, new MatOfInt(255), new MatOfFloat(0, 256));
 
         //图片归一化
-        Core.normalize(hist_1, hist_1, 1, hist_1.rows() , Core.NORM_MINMAX, -1, new Mat() );
-        Core.normalize(hist_2, hist_2, 1, hist_2.rows() , Core.NORM_MINMAX, -1, new Mat() );
+        Core.normalize(hist_1, hist_1, 1, hist_1.rows(), Core.NORM_MINMAX, -1, new Mat());
+        Core.normalize(hist_2, hist_2, 1, hist_2.rows(), Core.NORM_MINMAX, -1, new Mat());
 
         //直方图比较
-        double a = Imgproc.compareHist(hist_1,hist_1,Imgproc.CV_COMP_CORREL);
-        double b = Imgproc.compareHist(hist_1,hist_2, Imgproc.CV_COMP_CORREL);
+        double a = Imgproc.compareHist(hist_1, hist_1, Imgproc.CV_COMP_CORREL);
+        double b = Imgproc.compareHist(hist_1, hist_2, Imgproc.CV_COMP_CORREL);
 //        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 //        System.out.println("越接近1越相识度越高");
 //        System.out.println("同一张图片\t比较结果(相识度)："+a);
@@ -99,24 +108,25 @@ public class ImageProcessingUtil {
         Mat hsv = new Mat();
 
         //图片转HSV
-        Imgproc.cvtColor(src, hsv,Imgproc.COLOR_BGR2HSV);
+        Imgproc.cvtColor(src, hsv, Imgproc.COLOR_BGR2HSV);
 
         Mat hist = new Mat();
         //直方图计算
-        Imgproc.calcHist(Stream.of(hsv).collect(Collectors.toList()),new MatOfInt(0),new Mat(),hist,new MatOfInt(255) ,new MatOfFloat(0,256));
+        Imgproc.calcHist(Stream.of(hsv).collect(Collectors.toList()), new MatOfInt(0), new Mat(), hist, new MatOfInt(255), new MatOfFloat(0, 256));
         //图片归一化
-        Core.normalize(hist, hist, 1, hist.rows() , Core.NORM_MINMAX, -1, new Mat() );
+        Core.normalize(hist, hist, 1, hist.rows(), Core.NORM_MINMAX, -1, new Mat());
         //直方图比较
-        double a = Imgproc.compareHist(hist,hist,Imgproc.CV_COMP_CORREL);
-        System.out.println("越接近1越相识度越高\n比较结果："+a);
+        double a = Imgproc.compareHist(hist, hist, Imgproc.CV_COMP_CORREL);
+        System.out.println("越接近1越相识度越高\n比较结果：" + a);
     }
 
     /**
      * 图片转文字
      * https://www.csdn.net/tags/Mtzacg4sOTIwMzktYmxvZwO0O0OO0O0O.html
+     *
      * @return
      */
-    public static String imageToText(BufferedImage image){
+    public static String imageToText(BufferedImage image) {
         Tesseract tesseract = new Tesseract();
         String resText = "";
         //设置字库
@@ -141,9 +151,10 @@ public class ImageProcessingUtil {
     /**
      * 图片转文字
      * https://www.csdn.net/tags/Mtzacg4sOTIwMzktYmxvZwO0O0OO0O0O.html
+     *
      * @return
      */
-    public static String imageToText(String Path){
+    public static String imageToText(String Path) {
         Tesseract tesseract = new Tesseract();
         String resText = "";
         //设置字库
@@ -167,22 +178,23 @@ public class ImageProcessingUtil {
 
     /**
      * 优化图像清晰度
+     *
      * @param image
      * @return
      */
     private static BufferedImage binaryMethod(BufferedImage image) {
         int[][] grayImage = getGrayByImage(image);
-        BufferedImage optImage = new BufferedImage(grayImage.length,grayImage[0].length,BufferedImage.TYPE_INT_RGB);
-        for(int width= 0 ; width < grayImage.length;width++){
-            for(int height = 0; height < grayImage[0].length; height++){
+        BufferedImage optImage = new BufferedImage(grayImage.length, grayImage[0].length, BufferedImage.TYPE_INT_RGB);
+        for (int width = 0; width < grayImage.length; width++) {
+            for (int height = 0; height < grayImage[0].length; height++) {
                 // 二值化
-                if(grayImage[width][height] <= 110){
+                if (grayImage[width][height] <= 110) {
                     grayImage[width][height] = 255;
-                }else {
+                } else {
                     grayImage[width][height] = 0;
                 }
-                Color optColor = new Color(grayImage[width][height],grayImage[width][height],grayImage[width][height]);
-                optImage.setRGB(width,height,optColor.getRGB());
+                Color optColor = new Color(grayImage[width][height], grayImage[width][height], grayImage[width][height]);
+                optImage.setRGB(width, height, optColor.getRGB());
             }
         }
         return optImage;
@@ -240,7 +252,7 @@ public class ImageProcessingUtil {
                 }
             }
         }
-        int similarPercent = similarity * 100/(similarity + different) ;
+        int similarPercent = similarity * 100 / (similarity + different);
 //        System.out.println("similarity:" + similarity + "  different:" + different + "  Percentage of similarity：" + similarPercent);
         return similarPercent;
     }
@@ -253,7 +265,7 @@ public class ImageProcessingUtil {
      */
     public static int getGrayByPixel(int pixel) {
         // 下面三行代码将一个数字转换为RGB数字
-        int r = (pixel & 0xff0000) >> 16 ;
+        int r = (pixel & 0xff0000) >> 16;
         int g = (pixel & 0xff00) >> 8;
         int b = (pixel & 0xff);
         return (int) (0.3 * r + 0.59 * g + 0.11 * b);
@@ -262,10 +274,11 @@ public class ImageProcessingUtil {
 
     /**
      * 图像加亮
+     *
      * @param image
      * @return
      */
-    public static BufferedImage optImage(BufferedImage image){
+    public static BufferedImage optImage(BufferedImage image) {
         int width = image.getWidth();
         int height = image.getHeight();
         int[][] imageGray = new int[width][height];
@@ -291,15 +304,11 @@ public class ImageProcessingUtil {
         // 二值化
         int threshold = ostu(imageGray, width, height);
         BufferedImage binaryBufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                if (imageGray[x][y] > threshold)
-                {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (imageGray[x][y] > threshold) {
                     imageGray[x][y] |= 0x00FFFF;
-                } else
-                {
+                } else {
                     imageGray[x][y] &= 0xFF0000;
                 }
                 binaryBufferedImage.setRGB(x, y, imageGray[x][y]);
@@ -307,41 +316,37 @@ public class ImageProcessingUtil {
         }
 
         //去除干扰线条
-        for(int y = 1; y < height-1; y++){
-            for(int x = 1; x < width-1; x++){
-                boolean flag = false ;
-                if(isBlack(binaryBufferedImage.getRGB(x, y))){
+        for (int y = 1; y < height - 1; y++) {
+            for (int x = 1; x < width - 1; x++) {
+                boolean flag = false;
+                if (isBlack(binaryBufferedImage.getRGB(x, y))) {
                     //左右均为空时，去掉此点
-                    if(isWhite(binaryBufferedImage.getRGB(x-1, y)) && isWhite(binaryBufferedImage.getRGB(x+1, y))){
+                    if (isWhite(binaryBufferedImage.getRGB(x - 1, y)) && isWhite(binaryBufferedImage.getRGB(x + 1, y))) {
                         flag = true;
                     }
                     //上下均为空时，去掉此点
-                    if(isWhite(binaryBufferedImage.getRGB(x, y+1)) && isWhite(binaryBufferedImage.getRGB(x, y-1))){
+                    if (isWhite(binaryBufferedImage.getRGB(x, y + 1)) && isWhite(binaryBufferedImage.getRGB(x, y - 1))) {
                         flag = true;
                     }
                     //斜上下为空时，去掉此点
-                    if(isWhite(binaryBufferedImage.getRGB(x-1, y+1)) && isWhite(binaryBufferedImage.getRGB(x+1, y-1))){
+                    if (isWhite(binaryBufferedImage.getRGB(x - 1, y + 1)) && isWhite(binaryBufferedImage.getRGB(x + 1, y - 1))) {
                         flag = true;
                     }
-                    if(isWhite(binaryBufferedImage.getRGB(x+1, y+1)) && isWhite(binaryBufferedImage.getRGB(x-1, y-1))){
+                    if (isWhite(binaryBufferedImage.getRGB(x + 1, y + 1)) && isWhite(binaryBufferedImage.getRGB(x - 1, y - 1))) {
                         flag = true;
                     }
-                    if(flag){
-                        binaryBufferedImage.setRGB(x,y,-1);
+                    if (flag) {
+                        binaryBufferedImage.setRGB(x, y, -1);
                     }
                 }
             }
         }
         // 矩阵打印
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                if (isBlack(binaryBufferedImage.getRGB(x, y)))
-                {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (isBlack(binaryBufferedImage.getRGB(x, y))) {
 //                    System.out.print("*");
-                } else
-                {
+                } else {
 //                    System.out.print(" ");
                 }
             }
@@ -350,21 +355,17 @@ public class ImageProcessingUtil {
         return binaryBufferedImage;
     }
 
-    private static boolean isBlack(int colorInt)
-    {
+    private static boolean isBlack(int colorInt) {
         Color color = new Color(colorInt);
-        if (color.getRed() + color.getGreen() + color.getBlue() <= 300)
-        {
+        if (color.getRed() + color.getGreen() + color.getBlue() <= 300) {
             return true;
         }
         return false;
     }
 
-    private static boolean isWhite(int colorInt)
-    {
+    private static boolean isWhite(int colorInt) {
         Color color = new Color(colorInt);
-        if (color.getRed() + color.getGreen() + color.getBlue() > 300)
-        {
+        if (color.getRed() + color.getGreen() + color.getBlue() > 300) {
             return true;
         }
         return false;
@@ -372,19 +373,17 @@ public class ImageProcessingUtil {
 
     /**
      * 求出图像处理阈值
+     *
      * @param gray
      * @param w
      * @param h
      * @return
      */
-    private static int ostu(int[][] gray, int w, int h)
-    {
+    private static int ostu(int[][] gray, int w, int h) {
         int[] histData = new int[w * h];
         // Calculate histogram
-        for (int x = 0; x < w; x++)
-        {
-            for (int y = 0; y < h; y++)
-            {
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
                 int red = 0xFF & gray[x][y];
                 histData[red]++;
             }
@@ -404,8 +403,7 @@ public class ImageProcessingUtil {
         float varMax = 0;
         int threshold = 0;
 
-        for (int t = 0; t < 256; t++)
-        {
+        for (int t = 0; t < 256; t++) {
             wB += histData[t]; // Weight Background
             if (wB == 0)
                 continue;
@@ -423,8 +421,7 @@ public class ImageProcessingUtil {
             float varBetween = (float) wB * (float) wF * (mB - mF) * (mB - mF);
 
             // Check if new maximum found
-            if (varBetween > varMax)
-            {
+            if (varBetween > varMax) {
                 varMax = varBetween;
                 threshold = t;
             }
@@ -435,11 +432,12 @@ public class ImageProcessingUtil {
 
     /**
      * 图像加亮
+     *
      * @param color
      * @return
      */
-    private static int imageLight(int color){
-        if(color >255){
+    private static int imageLight(int color) {
+        if (color > 255) {
             color = 255;
         }
         return color;

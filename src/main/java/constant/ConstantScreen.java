@@ -5,8 +5,13 @@ public class ConstantScreen {
     /**
      * 游戏关闭按钮处的坐标
      */
-    public static final int ROOT_X = 758;
-    public static final int ROOT_Y = 120;
+    public static final int ROOT_X = 777;
+    public static final int ROOT_Y = 148;
+
+    public static final int SW_WINDOW_X = 112;
+    public static final int SW_WINDOW_Y = 15;
+    public static final int SW_WINDOW_WIDTH = 1024;
+    public static final int SW_WINDOW_HEIGHT = 768;
 
     /**
      * 继续任务

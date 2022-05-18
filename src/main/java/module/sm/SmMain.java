@@ -1,19 +1,23 @@
 package module.sm;
 
+import bean.SwPointBean;
 import constant.ConstantScreen;
 import models.*;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
+import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
 import utils.ImShow;
 import utils.ImageProcessingUtil;
 import utils.ScreenUtil;
+import utils.ThreadPoolUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.color.ColorSpace;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.io.ByteArrayInputStream;
@@ -22,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import static org.opencv.core.CvType.CV_8UC3;
 import static org.opencv.imgproc.Imgproc.COLOR_RGB2BGR;
@@ -79,34 +84,80 @@ public class SmMain {
     public SmMain() {
     }
 
+    static long mOldTime = - 1;
+
+
     /**
      * 开始做师门
      */
     public static void start(){
+
+        // robot init
+        try {
+            if (mRobot == null) mRobot = new Robot();
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
+
         //实时抓取师门区域的图片
-        ScreenUtil.getScreenShot(ConstantScreen.SHOT_X_CHALLENGE, ConstantScreen.SHOT_Y_CHALLENGE,
-                ConstantScreen.CHALLENGE_WIDTH, ConstantScreen.CHALLENGE_HEIGHT,null);
+        ScreenUtil.getScreenShot(ConstantScreen.ROOT_X, ConstantScreen.ROOT_Y,
+                ConstantScreen.SW_WINDOW_WIDTH, ConstantScreen.SW_WINDOW_HEIGHT,null);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        ImageProcessingUtil.matchTemplate(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/screenshot.jpg");
-        double collectProbability= ImageProcessingUtil.compareImage(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/collect.jpg");
-        double catchPetProbability= ImageProcessingUtil.compareImage(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/catch_pet.jpg");
-        double challengeProbability= ImageProcessingUtil.compareImage(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/challenge3.jpg");
-        if(collectProbability > catchPetProbability && collectProbability > challengeProbability){
+        SwPointBean pointBean = ImageProcessingUtil.matchTemplate(DIR_RES + "source/catch_pet.jpg", DIR_RES + "buffer/screenshot.jpg");
+        /**
+         * 开个线程处理点击事件
+         */
+        ThreadPoolUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    SwPointBean pointInfo = ScreenUtil.getPointInfo();
+                    Color pixelColor = mRobot.getPixelColor(pointInfo.x + 3, pointInfo.y + 3);
+                    if (pixelColor.getRed() > 85 && pixelColor.getRed() < 100 && pixelColor.getGreen() > 80
+                            && pixelColor.getGreen() < 100 && pixelColor.getRed() > 75 && pixelColor.getRed() < 95) {
+                        if(mOldTime == -1 || System.currentTimeMillis() - mOldTime > 5 * 1000) {
+                            mOldTime = System.currentTimeMillis();
+                            mRobot.mousePress(KeyEvent.BUTTON1_MASK);
+                            System.out.println("mousse press...");
+                        }
+                    }
+                    try {
+                        Thread.sleep(new Random().nextInt(100) + 100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
+        for(int i = 0 ;i<pointBean.width * 2; i ++){
+            for(int j = 0; j<pointBean.heigt * 2;j++){
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                moveMouse((int) (ConstantScreen.ROOT_X + pointBean.x + i), (int) (ConstantScreen.ROOT_Y + pointBean.y + j + 15));
+            }
+        }
+//        double collectProbability= ImageProcessingUtil.compareImage(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/collect.jpg");
+//        double catchPetProbability= ImageProcessingUtil.compareImage(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/catch_pet.jpg");
+//        double challengeProbability= ImageProcessingUtil.compareImage(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/challenge3.jpg");
+//        if(collectProbability > catchPetProbability && collectProbability > challengeProbability){
 //            System.out.println("当前师门任务类别是：【收集材料】...");
-        }
-        if(catchPetProbability > collectProbability && catchPetProbability > challengeProbability){
+//        }
+//        if(catchPetProbability > collectProbability && catchPetProbability > challengeProbability){
 //            System.out.println("当前师门任务类别是：【抓宠物】...");
-        }
-        if(challengeProbability > collectProbability && challengeProbability > catchPetProbability){
+//        }
+//        if(challengeProbability > collectProbability && challengeProbability > catchPetProbability){
 //            System.out.println("当前师门任务类别是：【挑战】...");
-        }
+//        }
 //        System.out.println("当前师门任务类别是：【收集材料】:" + collectProbability + "【抓宠物】:" + catchPetProbability  + "【挑战】:" + challengeProbability );
 
-        ImageProcessingUtil.imageToText(DIR_RES + "buffer/screenshot.jpg");
+//        ImageProcessingUtil.imageToText(DIR_RES + "buffer/screenshot.jpg");
     }
 
     public static void moveMouse(int x, int y) {

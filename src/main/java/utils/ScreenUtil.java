@@ -1,6 +1,8 @@
 package utils;
 
+import bean.SwPointBean;
 import module.sm.SmMain;
+import org.opencv.core.Point;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -16,24 +18,31 @@ public class ScreenUtil {
     /**
      * 获取屏幕坐标
      */
-    public static void getPointInfo() {
+    public static SwPointBean getPointInfo() {
+        SwPointBean pointBean = new SwPointBean();
+        try {
+            if (mRobot == null) mRobot = new Robot();
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
         int x = 0;
         int y = 0;
-        while (true) {
             PointerInfo pinfo = MouseInfo.getPointerInfo();
             int mx = pinfo.getLocation().x;
             int my = pinfo.getLocation().y;
             if (x != mx || y != my) {
                 x = mx;
                 y = my;
-                System.out.println("x:" + mx + ",y:" + my);
+                pointBean.x = x;
+                pointBean.y = y;
+                System.out.println("x:" + mx + ",y:" + my + "  mouse color:" +mRobot.getPixelColor(x+3,y +3));
             }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 System.out.println(e.getMessage());
             }
-        }
+        return pointBean;
     }
 
     /**

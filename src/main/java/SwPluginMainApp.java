@@ -56,8 +56,15 @@ public class SwPluginMainApp {
             @Override
             public void run() {
                 if (mIsShowCurrentPoint) {
-                    //获取鼠标坐标点
-                    ScreenUtil.getPointInfo();
+                    while (true) {
+                        try {
+                            Thread.sleep(100);
+                            //获取鼠标坐标点
+                            ScreenUtil.getPointInfo();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 }
             }
         });
@@ -68,6 +75,16 @@ public class SwPluginMainApp {
                 while (mIsDoSm) {
                     SmMain.start();
                 }
+            }
+        });
+
+        /**
+         * 监控鼠标颜色的线程
+         */
+        ThreadPoolUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+
             }
         });
     }
