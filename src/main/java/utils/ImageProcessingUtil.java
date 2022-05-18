@@ -2,22 +2,48 @@ package utils;
 
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfFloat;
-import org.opencv.core.MatOfInt;
+import org.opencv.core.*;
+import org.opencv.core.Point;
+import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ImageProcessingUtil {
+
+    /**
+     * 模板匹配
+     * RE：https://blog.csdn.net/datouniao1/article/details/108449562
+     */
+    public static void matchTemplate(String targetImagePath , String baseImagePath){
+        Mat src_1 = Imgcodecs.imread(targetImagePath);// 图片 1
+        Mat src_2 = Imgcodecs.imread(baseImagePath);// 图片 2
+        Mat result=new Mat();
+        int method=Imgproc.TM_CCOEFF;
+        Imgproc.matchTemplate(src_2,src_1,result,Imgproc.TM_CCOEFF);
+        Core.MinMaxLocResult result_m = Core.minMaxLoc(result);//取最大值和最小值
+        Point maxloc = result_m.maxLoc;
+        Point minloc = result_m.minLoc;
+        System.out.println("minloc:" + minloc.toString() + "  maxloc:" +maxloc.toString());
+        //获取坐标
+        Point p1 ;
+        //如果是平方不同或者归一化平方不同,那么就取最小值
+        p1 = (method == Imgproc.TM_SQDIFF || method == Imgproc.TM_SQDIFF_NORMED) ? minloc : maxloc;
+
+        Point p2 = new Point(p1.x+src_1.cols(),p1.y+src_1.rows());
+
+        //绘制
+        Imgproc.rectangle(src_2,p1,p2,new Scalar(0,0,255));
+
+        HighGui.imshow("原图",src_2);
+        HighGui.imshow("模板",src_1);
+        HighGui.waitKey(10);
+    }
 
     public static double compareImage(String targetImagePath , String baseImagePath){
         return compareHist_2(targetImagePath,baseImagePath);

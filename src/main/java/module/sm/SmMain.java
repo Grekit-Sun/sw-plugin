@@ -84,25 +84,27 @@ public class SmMain {
      */
     public static void start(){
         //实时抓取师门区域的图片
-        ScreenUtil.getScreenShot(ConstantScreen.SHOT_X_CHALLENGE, ConstantScreen.SHOT_Y_CHALLENGE, ConstantScreen.CHALLENGE_WIDTH, ConstantScreen.CHALLENGE_HEIGHT,null);
+        ScreenUtil.getScreenShot(ConstantScreen.SHOT_X_CHALLENGE, ConstantScreen.SHOT_Y_CHALLENGE,
+                ConstantScreen.CHALLENGE_WIDTH, ConstantScreen.CHALLENGE_HEIGHT,null);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        ImageProcessingUtil.matchTemplate(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/screenshot.jpg");
         double collectProbability= ImageProcessingUtil.compareImage(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/collect.jpg");
         double catchPetProbability= ImageProcessingUtil.compareImage(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/catch_pet.jpg");
         double challengeProbability= ImageProcessingUtil.compareImage(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/challenge3.jpg");
         if(collectProbability > catchPetProbability && collectProbability > challengeProbability){
-            System.out.println("当前师门任务类别是：【收集材料】...");
+//            System.out.println("当前师门任务类别是：【收集材料】...");
         }
         if(catchPetProbability > collectProbability && catchPetProbability > challengeProbability){
-            System.out.println("当前师门任务类别是：【抓宠物】...");
+//            System.out.println("当前师门任务类别是：【抓宠物】...");
         }
         if(challengeProbability > collectProbability && challengeProbability > catchPetProbability){
-            System.out.println("当前师门任务类别是：【挑战】...");
+//            System.out.println("当前师门任务类别是：【挑战】...");
         }
-        System.out.println("当前师门任务类别是：【收集材料】:" + collectProbability + "【抓宠物】:" + catchPetProbability  + "【挑战】:" + challengeProbability );
+//        System.out.println("当前师门任务类别是：【收集材料】:" + collectProbability + "【抓宠物】:" + catchPetProbability  + "【挑战】:" + challengeProbability );
 
         ImageProcessingUtil.imageToText(DIR_RES + "buffer/screenshot.jpg");
     }
