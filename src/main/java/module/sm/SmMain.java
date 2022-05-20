@@ -9,10 +9,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
-import utils.ImShow;
-import utils.ImageProcessingUtil;
-import utils.ScreenUtil;
-import utils.ThreadPoolUtil;
+import utils.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -40,7 +37,6 @@ import static org.opencv.imgproc.Imgproc.cvtColor;
  * @author: ZhengXiang Sun
  */
 public class SmMain {
-    private static Robot mRobot;
     private static final String DIR_RES = "/Users/sun/dev/00_IDEA/workspace/sw-plugin/src/main/resources/";
 
 //    private static final int ROOT_X = 763;
@@ -89,21 +85,12 @@ public class SmMain {
      * 开始做师门
      */
     public static void start() {
-
-        // robot init
-        try {
-            if (mRobot == null) mRobot = new Robot();
-        } catch (AWTException e) {
-            e.printStackTrace();
-        }
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
         pointTaskItem();
-
         //实时抓取师门区域的图片26
         ScreenUtil.getScreenShot(ConstantScreen.ROOT_X + 237, ConstantScreen.ROOT_Y + 270,
                 222, 26, null);
@@ -139,11 +126,11 @@ public class SmMain {
                     SwPointBean pointInfo = ScreenUtil.getPointInfo();
                     //截取鼠标图片，发现鼠标截图截不进去
 //                    ScreenUtil.getScreenShot(pointInfo.x -50,pointInfo.y-50,100,100,"buffer/mouse.jpg");
-                    Color pixelColor = mRobot.getPixelColor(pointInfo.x, pointInfo.y );
+                    Color pixelColor = AwtUtil.getRobot().getPixelColor(pointInfo.x, pointInfo.y );
                     if (pixelColor.getBlue() > 225) {
                         if (mOldTime == -1 || System.currentTimeMillis() - mOldTime > 2 * 1000) {
                             mOldTime = System.currentTimeMillis();
-                            mRobot.mousePress(KeyEvent.BUTTON1_MASK);
+                            AwtUtil.getRobot().mousePress(KeyEvent.BUTTON1_MASK);
                             System.out.println("mousse press...");
                         }
                     }
@@ -172,25 +159,13 @@ public class SmMain {
      * 点击任务栏
      */
     private static void pointTaskItem(){
-        // robot init
-        try {
-            if (mRobot == null) mRobot = new Robot();
-        } catch (AWTException e) {
-            e.printStackTrace();
-        }
         moveMouse(ConstantScreen.ROOT_TASK_X,ConstantScreen.ROOT_TASK_Y);
 //        mRobot.delay(1000);
-        mRobot.keyPress(KeyEvent.BUTTON1_MASK);
+        AwtUtil.getRobot().keyPress(KeyEvent.BUTTON1_MASK);
     }
 
     public static void moveMouse(int x, int y) {
-        // robot init
-        try {
-            if (mRobot == null) mRobot = new Robot();
-        } catch (AWTException e) {
-            e.printStackTrace();
-        }
-        mRobot.mouseMove(x, y);
+        AwtUtil.getRobot().mouseMove(x, y);
     }
 
     //Function to denoise an image.

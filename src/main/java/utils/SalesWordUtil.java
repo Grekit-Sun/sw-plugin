@@ -14,9 +14,6 @@ import java.util.Random;
  */
 public class SalesWordUtil {
 
-    private static Robot mRobot;
-    private static Random mRandom = new Random();
-
     public SalesWordUtil() {
     }
 
@@ -31,30 +28,24 @@ public class SalesWordUtil {
      * 喊话
      */
     public static void shoutOnTheWorld(List<Integer> keyWords) {
-        // robot init
-        try {
-            if (mRobot == null) mRobot = new Robot();
-        } catch (AWTException e) {
-            e.printStackTrace();
-        }
         int firstKey = -1111;
         for (int keyWord : keyWords) {
             if (KeyEvent.VK_SHIFT == keyWord) {
                 firstKey = KeyEvent.VK_SHIFT;
             } else if (firstKey != -1111) {      //开始组合字
-                mRobot.keyPress(firstKey);
+                AwtUtil.getRobot().keyPress(firstKey);
                 setRandomSleep();
-                mRobot.keyPress(keyWord);
+                AwtUtil.getRobot().keyPress(keyWord);
                 setRandomSleep();
-                mRobot.keyRelease(firstKey);
+                AwtUtil.getRobot().keyRelease(firstKey);
                 setRandomSleep();
-                mRobot.keyRelease(keyWord);
+                AwtUtil.getRobot().keyRelease(keyWord);
                 setRandomSleep();
                 firstKey = -1111;
             } else {             //单个字
-                mRobot.keyPress(keyWord);
+                AwtUtil.getRobot().keyPress(keyWord);
                 setRandomSleep();
-                mRobot.keyRelease(keyWord);
+                AwtUtil.getRobot().keyRelease(keyWord);
                 setRandomSleep();
             }
 
@@ -65,7 +56,7 @@ public class SalesWordUtil {
      * 随机休眠防止被检测
      */
     private static void setRandomSleep() {
-        int randomSleepNum = mRandom.nextInt(100);
+        int randomSleepNum = AwtUtil.mRandom.nextInt(100);
         int sleepTime = randomSleepNum + 200;
         System.out.println("random sleep num:" + randomSleepNum + "  sleep time:" + sleepTime + "ms..."
                 + "\n Current thread name:" + Thread.currentThread().getName());

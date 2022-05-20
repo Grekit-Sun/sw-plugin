@@ -1,9 +1,11 @@
 import module.sm.SmMain;
+import utils.AwtUtil;
 import utils.SalesWordUtil;
 import utils.ScreenUtil;
 import utils.ThreadPoolUtil;
 import constant.ConstantSaleWord;
 
+import java.awt.*;
 import java.util.Random;
 
 import static org.opencv.core.Core.NATIVE_LIBRARY_NAME;
@@ -31,60 +33,63 @@ public class SwPluginMainApp {
      */
     private static boolean mIsShowCurrentPoint = true;
 
-    private static Random mRandom = new Random();
+    public static Random mRandom = new Random();
+
     private static final int INTERVAL_SPEAK = 50;
 
-
     public static void main(String[] args) {
+        //init robot
+        AwtUtil.init();
         //加载OpenCv库
         System.loadLibrary(NATIVE_LIBRARY_NAME);
-        ThreadPoolUtil.getInstance().execute(new Runnable() {
-            @Override
-            public void run() {
-                while (mIsSaleOnTheWorld) {     //世界卖钱
+        //shout on the world
+        shoutOnTheWorld();
+        //show current point
+        showCurrentPoint();
+        //做师门
+        doSm();
+    }
+
+    /**
+     * 做师门
+     */
+    private static void doSm() {
+        ThreadPoolUtil.getInstance().execute(() -> {
+            if(mIsDoSm) SmMain.start();
+        });
+    }
+
+    /**
+     * show current point
+     */
+    private static void showCurrentPoint() {
+        ThreadPoolUtil.getInstance().execute(() -> {
+            if (mIsShowCurrentPoint) {
+                while (true) {
                     try {
-                        Thread.sleep(mRandom.nextInt(10 * 1000) + INTERVAL_SPEAK * 1000);
+                        Thread.sleep(1000);
+                        //获取鼠标坐标点
+                        ScreenUtil.getPointInfo();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    SalesWordUtil.shoutOnTheWorld(ConstantSaleWord.getSaleWord());
-                }
-            }
-        });
-
-        ThreadPoolUtil.getInstance().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (mIsShowCurrentPoint) {
-                    while (true) {
-                        try {
-                            Thread.sleep(1000);
-                            //获取鼠标坐标点
-                            ScreenUtil.getPointInfo();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+                        throw new RuntimeException(e);
                     }
                 }
             }
         });
+    }
 
-        ThreadPoolUtil.getInstance().execute(new Runnable() {
-            @Override
-            public void run() {         //做师门
-                while (mIsDoSm) {
-                    SmMain.start();
+    /**
+     * shout on the world
+     */
+    private static void shoutOnTheWorld() {
+        ThreadPoolUtil.getInstance().execute(() -> {
+            while (mIsSaleOnTheWorld) {     //世界卖钱
+                try {
+                    Thread.sleep(mRandom.nextInt(10 * 1000) + INTERVAL_SPEAK * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            }
-        });
-
-        /**
-         * 监控鼠标颜色的线程
-         */
-        ThreadPoolUtil.getInstance().execute(new Runnable() {
-            @Override
-            public void run() {
-
+                SalesWordUtil.shoutOnTheWorld(ConstantSaleWord.getSaleWord());
             }
         });
     }

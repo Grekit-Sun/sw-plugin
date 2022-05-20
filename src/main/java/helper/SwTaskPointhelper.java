@@ -1,6 +1,8 @@
 package helper;
 
+import bean.SwPointBean;
 import constant.ConstantScreen;
+import utils.ScreenUtil;
 
 import java.awt.*;
 
@@ -31,5 +33,9 @@ public class SwTaskPointhelper {
             e.printStackTrace();
         }
         mRobot.mouseMove(x, y);
+    }
+
+    public static void inputMsgToFile(){
+        SwPointBean pointInfo = ScreenUtil.getPointInfo();
     }
 }
