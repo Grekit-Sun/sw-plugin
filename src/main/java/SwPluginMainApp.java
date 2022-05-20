@@ -24,12 +24,12 @@ public class SwPluginMainApp {
     /**
      * 做师门开光
      */
-    private static boolean mIsDoSm = true;
+    private static boolean mIsDoSm = false;
 
     /**
      * 获取屏幕坐标点
      */
-    private static boolean mIsShowCurrentPoint = false;
+    private static boolean mIsShowCurrentPoint = true;
 
     private static Random mRandom = new Random();
     private static final int INTERVAL_SPEAK = 50;
@@ -58,7 +58,7 @@ public class SwPluginMainApp {
                 if (mIsShowCurrentPoint) {
                     while (true) {
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(1000);
                             //获取鼠标坐标点
                             ScreenUtil.getPointInfo();
                         } catch (InterruptedException e) {

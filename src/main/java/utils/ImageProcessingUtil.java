@@ -31,7 +31,9 @@ public class ImageProcessingUtil {
         Core.MinMaxLocResult result_m = Core.minMaxLoc(result);//取最大值和最小值
         Point maxloc = result_m.maxLoc;
         Point minloc = result_m.minLoc;
-        System.out.println("minloc:" + minloc.toString() + "  maxloc:" + maxloc.toString());
+        double maxVal = result_m.maxVal;
+        double minVal = result_m.minVal;
+        System.out.println("maxVal:" + maxVal + "  minVal:" + minVal);
         //获取坐标
         Point p1;
         //如果是平方不同或者归一化平方不同,那么就取最小值

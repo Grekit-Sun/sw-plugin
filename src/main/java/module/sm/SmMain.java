@@ -47,9 +47,6 @@ public class SmMain {
 //    private static final int ROOT_Y = 112;
 
 
-
-
-
     /**
      * catch pet
      */
@@ -73,8 +70,9 @@ public class SmMain {
     private static BufferedImage mContinueTaskImg = readImage(DIR_RES + "source/continue_task.jpg");
     private static BufferedImage mChallengeImg = readImage(DIR_RES + "source/challenge.jpg");
     private static ArrayList<BufferedImage> mSmImageList;
+
     static {
-        mSmImageList =  new ArrayList<BufferedImage>();
+        mSmImageList = new ArrayList<BufferedImage>();
         mSmImageList.add(mCatchPetImg);
         mSmImageList.add(mCollectMaterialsImg);
         mSmImageList.add(mContinueTaskImg);
@@ -84,13 +82,13 @@ public class SmMain {
     public SmMain() {
     }
 
-    static long mOldTime = - 1;
+    static long mOldTime = -1;
 
 
     /**
      * 开始做师门
      */
-    public static void start(){
+    public static void start() {
 
         // robot init
         try {
@@ -98,51 +96,20 @@ public class SmMain {
         } catch (AWTException e) {
             e.printStackTrace();
         }
-
-        //实时抓取师门区域的图片
-        ScreenUtil.getScreenShot(ConstantScreen.ROOT_X, ConstantScreen.ROOT_Y,
-                ConstantScreen.SW_WINDOW_WIDTH, ConstantScreen.SW_WINDOW_HEIGHT,null);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        SwPointBean pointBean = ImageProcessingUtil.matchTemplate(DIR_RES + "source/catch_pet.jpg", DIR_RES + "buffer/screenshot.jpg");
-        /**
-         * 开个线程处理点击事件
-         */
-        ThreadPoolUtil.getInstance().execute(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    SwPointBean pointInfo = ScreenUtil.getPointInfo();
-                    Color pixelColor = mRobot.getPixelColor(pointInfo.x + 3, pointInfo.y + 3);
-                    if (pixelColor.getRed() > 85 && pixelColor.getRed() < 100 && pixelColor.getGreen() > 80
-                            && pixelColor.getGreen() < 100 && pixelColor.getRed() > 75 && pixelColor.getRed() < 95) {
-                        if(mOldTime == -1 || System.currentTimeMillis() - mOldTime > 5 * 1000) {
-                            mOldTime = System.currentTimeMillis();
-                            mRobot.mousePress(KeyEvent.BUTTON1_MASK);
-                            System.out.println("mousse press...");
-                        }
-                    }
-                    try {
-                        Thread.sleep(new Random().nextInt(100) + 100);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        });
-        for(int i = 0 ;i<pointBean.width * 2; i ++){
-            for(int j = 0; j<pointBean.heigt * 2;j++){
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                moveMouse((int) (ConstantScreen.ROOT_X + pointBean.x + i), (int) (ConstantScreen.ROOT_Y + pointBean.y + j + 15));
-            }
-        }
+
+        pointTaskItem();
+
+        //实时抓取师门区域的图片26
+        ScreenUtil.getScreenShot(ConstantScreen.ROOT_X + 237, ConstantScreen.ROOT_Y + 270,
+                222, 26, null);
+        ImageProcessingUtil.imageToText(DIR_RES + "buffer/screenshot.jpg");
+        SwPointBean pointBean = ImageProcessingUtil.matchTemplate(DIR_RES + "source/challenge.jpg", DIR_RES + "buffer/screenshot.jpg");
+//        startMouseEvent(pointBean);  //开启鼠标状态监听
 //        double collectProbability= ImageProcessingUtil.compareImage(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/collect.jpg");
 //        double catchPetProbability= ImageProcessingUtil.compareImage(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/catch_pet.jpg");
 //        double challengeProbability= ImageProcessingUtil.compareImage(DIR_RES + "buffer/screenshot.jpg", DIR_RES + "source/challenge3.jpg");
@@ -158,6 +125,62 @@ public class SmMain {
 //        System.out.println("当前师门任务类别是：【收集材料】:" + collectProbability + "【抓宠物】:" + catchPetProbability  + "【挑战】:" + challengeProbability );
 
 //        ImageProcessingUtil.imageToText(DIR_RES + "buffer/screenshot.jpg");
+    }
+
+    private static void startMouseEvent(SwPointBean pointBean) {
+
+        /**
+         * 开个线程处理点击事件
+         */
+        ThreadPoolUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    SwPointBean pointInfo = ScreenUtil.getPointInfo();
+                    //截取鼠标图片，发现鼠标截图截不进去
+//                    ScreenUtil.getScreenShot(pointInfo.x -50,pointInfo.y-50,100,100,"buffer/mouse.jpg");
+                    Color pixelColor = mRobot.getPixelColor(pointInfo.x, pointInfo.y );
+                    if (pixelColor.getBlue() > 225) {
+                        if (mOldTime == -1 || System.currentTimeMillis() - mOldTime > 2 * 1000) {
+                            mOldTime = System.currentTimeMillis();
+                            mRobot.mousePress(KeyEvent.BUTTON1_MASK);
+                            System.out.println("mousse press...");
+                        }
+                    }
+                    try {
+                        Thread.sleep(new Random().nextInt(100) + 100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
+
+        for (int i = 0; i < pointBean.width * 2; i = i+2) {
+            for (int j = 0; j < pointBean.heigt * 2; j = j+2) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+//                            moveMouse((int) (ConstantScreen.ROOT_X + pointBean.x + i), (int) (ConstantScreen.ROOT_Y + pointBean.y + j + 15));
+            }
+        }
+    }
+
+    /**
+     * 点击任务栏
+     */
+    private static void pointTaskItem(){
+        // robot init
+        try {
+            if (mRobot == null) mRobot = new Robot();
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
+        moveMouse(ConstantScreen.ROOT_TASK_X,ConstantScreen.ROOT_TASK_Y);
+//        mRobot.delay(1000);
+        mRobot.keyPress(KeyEvent.BUTTON1_MASK);
     }
 
     public static void moveMouse(int x, int y) {
@@ -177,7 +200,7 @@ public class SmMain {
         int height = image.getHeight(null);
 
         int pixel;
-        int a,p;
+        int a, p;
 
         //Initialize a BufferedImage with the same width and height.
         BufferedImage denoisedImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -187,12 +210,12 @@ public class SmMain {
         //For each element in the original image, denoise it by finding the median of it and its neighbors.
         //Set the median values as the RGB value of denoised_img.
 
-        for(int col = 0; col < width; col++) {
-            for(int row = 0; row < height; row++) {
-                pixel = ((BufferedImage) image).getRGB(col,row);
-                color_array=findNeighbors(image,row,col);
-                a = (pixel >>24) & 0xFF;
-                p = (a<<24) | (color_array[0]<<16) | (color_array[1]<<8) | color_array[2];
+        for (int col = 0; col < width; col++) {
+            for (int row = 0; row < height; row++) {
+                pixel = ((BufferedImage) image).getRGB(col, row);
+                color_array = findNeighbors(image, row, col);
+                a = (pixel >> 24) & 0xFF;
+                p = (a << 24) | (color_array[0] << 16) | (color_array[1] << 8) | color_array[2];
                 denoisedImg.setRGB(col, row, p);
             }
         }
@@ -200,8 +223,7 @@ public class SmMain {
     }
 
     //Method to find the neighbors of a 2D Matrix (Image) element.
-    public static int[] findNeighbors(BufferedImage img, int row, int col)
-    {
+    public static int[] findNeighbors(BufferedImage img, int row, int col) {
         //Get original width and height of the image.
         int width = img.getWidth(null);
         int height = img.getHeight(null);
@@ -213,14 +235,14 @@ public class SmMain {
 
         int pixel;
         int i = 0;
-        int x,y;
+        int x, y;
 
         //For each neighbor element (including the current element), get its red, blue and green value and append to respective arrays.
-        for(x = row - 1;x <= row+1;x++) {
-            if(x < height && x >= 0) {
-                for(y = col - 1;y <= col+1;y++) {
+        for (x = row - 1; x <= row + 1; x++) {
+            if (x < height && x >= 0) {
+                for (y = col - 1; y <= col + 1; y++) {
                     if (y < width && y >= 0) {
-                        pixel = ((BufferedImage) img).getRGB(y,x);
+                        pixel = ((BufferedImage) img).getRGB(y, x);
                         red[i] = (pixel >> 16) & 0xFF;
                         green[i] = (pixel >> 8) & 0xFF;
                         blue[i] = pixel & 0xFF;
@@ -232,34 +254,33 @@ public class SmMain {
 
 
         //For pixels in the edges, number of neighbors won't be 9.
-        if(i != 9) {
+        if (i != 9) {
             red = Arrays.copyOfRange(red, 0, i);
             green = Arrays.copyOfRange(green, 0, i);
             blue = Arrays.copyOfRange(blue, 0, i);
         }
 
         //Find median of each array.
-        int redclr = findMedian(red,red.length);
-        int greenclr = findMedian(green,green.length);
-        int blueclr = findMedian(blue,blue.length);
+        int redclr = findMedian(red, red.length);
+        int greenclr = findMedian(green, green.length);
+        int blueclr = findMedian(blue, blue.length);
 
         //Store median values in an array and return it.
-        int color[] = {redclr,greenclr,blueclr};
+        int color[] = {redclr, greenclr, blueclr};
         return color;
     }
 
     //Method to sort an array and find the median.
-    public static int findMedian(int arr[], int n)
-    {
+    public static int findMedian(int arr[], int n) {
         // Sort the array
         Arrays.sort(arr);
 
         // For even number of elements
         if (n % 2 != 0)
-            return (int)arr[n / 2];
+            return (int) arr[n / 2];
 
         // For odd number of elements
-        return (int)(arr[(n - 1) / 2] + arr[n / 2]) / 2;
+        return (int) (arr[(n - 1) / 2] + arr[n / 2]) / 2;
     }
 
     private static BufferedImage readImage(String imagePath) {
@@ -281,7 +302,7 @@ public class SmMain {
         return bufferedImage;
     }
 
-    private static  BufferedImage matToBufferImage(Mat mat){
+    private static BufferedImage matToBufferImage(Mat mat) {
         //编码图像
         MatOfByte matOfByte = new MatOfByte();
         boolean isEncodeOk = Imgcodecs.imencode(".jpg", mat, matOfByte);
@@ -306,7 +327,8 @@ public class SmMain {
     private static final int r = 10;
     private static final double eps = 1e-6;
     private static final int level = 5;
-    private static BufferedImage dehaze(BufferedImage image){
+
+    private static BufferedImage dehaze(BufferedImage image) {
         BufferedImage rgBformat = converttoRGBformat(image);
         byte[] image_rgb = (byte[]) rgBformat.getData().getDataElements(0, 0, rgBformat.getWidth(), rgBformat.getHeight(), null);
         Mat bimg1_mat;
@@ -325,20 +347,16 @@ public class SmMain {
      * @param input 未知格式BufferedImage图片
      * @return TYPE_3BYTE_BGR格式的BufferedImage图片
      */
-    public static BufferedImage converttoRGBformat(BufferedImage input)
-    {
-        if (null == input)
-        {
+    public static BufferedImage converttoRGBformat(BufferedImage input) {
+        if (null == input) {
             throw new NullPointerException("BufferedImage input can not be null!");
         }
-        if (BufferedImage.TYPE_3BYTE_BGR != input.getType())
-        {
+        if (BufferedImage.TYPE_3BYTE_BGR != input.getType()) {
             BufferedImage input_rgb = new BufferedImage(input.getWidth(), input.getHeight(),
                     BufferedImage.TYPE_3BYTE_BGR);
             new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_sRGB), null).filter(input, input_rgb);
             return input_rgb;
-        } else
-        {
+        } else {
             return input;
         }
     }
