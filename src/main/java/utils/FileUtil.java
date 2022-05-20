@@ -7,7 +7,7 @@ public class FileUtil {
 
     /**
      * 文字写入文本
-     * @param str
+     * @param list
      * @param path
      */
     public static void stringWriteIntoFile(List<String> list,String path) {

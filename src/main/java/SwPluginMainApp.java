@@ -67,7 +67,7 @@ public class SwPluginMainApp {
             if (mIsShowCurrentPoint) {
                 while (true) {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(800);
                         //获取鼠标坐标点
                         ScreenUtil.getPointInfo();
                     } catch (InterruptedException e) {

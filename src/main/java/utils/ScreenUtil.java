@@ -16,16 +16,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ScreenUtil {
 
-    private static final String DIR_RES = "/Users/sun/dev/00_IDEA/workspace/sw-plugin/src/main/resources/";
+    public static final String DIR_RES = "/Users/sun/dev/00_IDEA/workspace/sw-plugin/src/main/resources/";
 
     private static List<String> mXyList = new CopyOnWriteArrayList<>();
 
-    static int minR = 255;
-    static int maxR = 0;
-    static int minG = 255;
-    static int maxG =0;
-    static int minB = 255;
-    static  int maxB = 0;
     /**
      * 获取屏幕坐标
      */
@@ -41,34 +35,7 @@ public class ScreenUtil {
             y = my;
             pointBean.x = x;
             pointBean.y = y;
-//            System.out.println("x:" + mx + ",y:" + my + "  mouse color:" + mRobot.getPixelColor(x, y));
-            Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.TASK_CHALLENGE_2_X, ConstantScreen.TASK_CHALLENGE_2_Y);
-            maxR = Math.max(maxR,pixelColor.getRed());
-            minR = Math.min(minR,pixelColor.getRed());
-
-            maxG = Math.max(maxG,pixelColor.getGreen());
-            minG = Math.min(minG,pixelColor.getGreen());
-
-            maxB = Math.max(maxB,pixelColor.getBlue());
-            minB = Math.min(minB,pixelColor.getBlue());
-            String xy = "(maxR:" + maxR + ",minR:" + minR + ")" + "(maxG:" + maxG + ",minG:" + minG + ")" + "(maxB:" + maxB + ",minB:" + minB + ")";
-            mXyList.add(xy);
-            System.out.println(xy);
-            if(mXyList.size() > 10) {
-                ThreadPoolUtil.getInstance().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        FileUtil.stringWriteIntoFile(mXyList, DIR_RES + "file/sm.txt");
-                        mXyList.clear();
-                    }
-                });
-            }
-
-        }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
+            System.out.println("x:" + mx + ",y:" + my + "  mouse color:" + AwtUtil.getRobot().getPixelColor(x, y));
         }
         return pointBean;
     }
