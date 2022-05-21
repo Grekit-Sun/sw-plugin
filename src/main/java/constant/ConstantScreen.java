@@ -6,8 +6,8 @@ public class ConstantScreen {
      * 游戏关闭按钮处的坐标
      * 关闭按钮的中心偏右下的点
      */
-    public static final int ROOT_X = 772;
-    public static final int ROOT_Y = 102;
+    public static final int ROOT_X = 782;
+    public static final int ROOT_Y = 70;
     /**
      * 挑战
      */
@@ -77,6 +77,20 @@ public class ConstantScreen {
      */
     public static final int BUY_MATERIALS_X = ROOT_X + 541;
     public static final int BUY_MATERIALS_Y = ROOT_Y + 604;
+
+    /**
+     * 给予物资
+     */
+    public static final int SEND_MATERIALS_X = ROOT_X + 730;
+    public static final int SEND_MATERIALS_Y = ROOT_Y + 141;
+    public static final int SEND_MATERIALS_HAS_CLICK_X = ROOT_X + 279;
+    public static final int SEND_MATERIALS_HAS_CLICK_Y = ROOT_Y + 219;
+
+    public static final int SEND_SURE_X = ROOT_X + 362;
+    public static final int SEND_SURE_Y = ROOT_Y + 588;
+
+    public static final int PACKAGE_START_X = ROOT_X + 508;
+    public static final int PACKAGE_START_Y = ROOT_Y + 237;
 
     /**
      * 关闭购买物资

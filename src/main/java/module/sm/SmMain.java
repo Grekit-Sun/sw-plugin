@@ -247,7 +247,7 @@ public class SmMain {
         SwPointBean canClickXy = findCanClickXy();
         AwtUtil.getRobot().mouseMove(canClickXy.x, canClickXy.y);
         AwtUtil.performLeftMouseClick(2);
-        AwtUtil.getRobot().delay(57 * 1000 + AwtUtil.mRandom.nextInt(3 * 1000));
+        //直到出现继续任务，才继续往下走
         continueTask();
     }
 
@@ -261,15 +261,23 @@ public class SmMain {
         AwtUtil.performLeftMouseClick(1);
         AwtUtil.getRobot().delay(2 * 1000 + AwtUtil.mRandom.nextInt(500));
         //开始遍历需求的物资
-        if (startFindMaterials()) {     //找到物资，点击xx
+        if (hasThisMaterial() || startFindMaterials()) {     //找到物资，点击xx
             AwtUtil.getRobot().mouseMove(ConstantScreen.CLOSE_BUY_MATERIALS_X, ConstantScreen.CLOSE_BUY_MATERIALS_Y);
             AwtUtil.getRobot().delay(800 + AwtUtil.mRandom.nextInt(200));
+            AwtUtil.performLeftMouseClick(1);
         }
         SwPointBean canClickXy = findCanClickXy();
         AwtUtil.getRobot().mouseMove(canClickXy.x, canClickXy.y);
         AwtUtil.getRobot().delay(1000 + AwtUtil.mRandom.nextInt(200));
         AwtUtil.performLeftMouseClick(2);
         continueTask();
+    }
+
+    /**
+     * 身上本来就有
+     */
+    private static boolean hasThisMaterial(){
+        return  false;
     }
 
     /**
@@ -280,11 +288,11 @@ public class SmMain {
                 ConstantScreen.COLLECT_MATERIALS_WIDTH, ConstantScreen.COLLECT_MATERIALS_HEIGHT, null);
         SwPointBean swPointBean = ImageProcessingUtil.matchTemplate(DIR_RES + "source/need_materials.jpg", DIR_RES + "buffer/screenshot.jpg");
         //确认下是否为需求
-        if (confirmNeed(swPointBean.x, swPointBean.y)) {
-            AwtUtil.getRobot().mouseMove(swPointBean.x, swPointBean.y);
+        if (confirmNeed(swPointBean)) {
+            AwtUtil.getRobot().mouseMove(ConstantScreen.COLLECT_MATERIALS_X + swPointBean.x + 20, ConstantScreen.COLLECT_MATERIALS_Y + swPointBean.y+ 20);
             AwtUtil.getRobot().delay(800 + AwtUtil.mRandom.nextInt(200));
             //选中物资
-            AwtUtil.performLeftMouseClick(2);
+            AwtUtil.performLeftMouseClick(1);
             //移动到购买
             AwtUtil.getRobot().mouseMove(ConstantScreen.BUY_MATERIALS_X, ConstantScreen.BUY_MATERIALS_Y);
             AwtUtil.getRobot().delay(500 + AwtUtil.mRandom.nextInt(300));
@@ -296,11 +304,6 @@ public class SmMain {
             AwtUtil.getRobot().mouseMove(ConstantScreen.COLLECT_MATERIALS_NEXT_PAGE_X, ConstantScreen.COLLECT_MATERIALS_NEXT_PAGE_Y);
             AwtUtil.getRobot().delay(800 + AwtUtil.mRandom.nextInt(200));
             AwtUtil.performLeftMouseClick(1);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
             return startFindMaterials();
         }
     }
@@ -310,13 +313,14 @@ public class SmMain {
      *
      * @return
      */
-    private static boolean confirmNeed(int x, int y) {
-        for (int i = x; i < 43; i++) {
-            for (int j = y; j < 43; j++) {
+    private static boolean confirmNeed(SwPointBean swPointBean) {
+        for (int i = ConstantScreen.COLLECT_MATERIALS_X + swPointBean.x; i < ConstantScreen.COLLECT_MATERIALS_X + swPointBean.x + 43; i++) {
+            for (int j =ConstantScreen.COLLECT_MATERIALS_Y + swPointBean.x; j < ConstantScreen.COLLECT_MATERIALS_Y + swPointBean.y + 43; j++) {
                 Color pixelColor = AwtUtil.getRobot().getPixelColor(i, j);
                 if (pixelColor.getRed() == 221 && pixelColor.getGreen() == 155 && pixelColor.getBlue() == 0) {
                     Color anOtherPixel = AwtUtil.getRobot().getPixelColor(i + 7, j - 10);
                     if (anOtherPixel.getRed() == 210 && anOtherPixel.getGreen() == 200 && anOtherPixel.getBlue() == 104) {  //确定是要买的物资
+                        System.out.println("找到物资，位置为：（" + i + "，" + j + ")");
 //                        //鼠标移动到物资上
 //                        AwtUtil.getRobot().mouseMove(i, j);
 //                        AwtUtil.getRobot().delay(500 + AwtUtil.mRandom.nextInt(300));
@@ -387,7 +391,20 @@ public class SmMain {
      * 继续任务
      */
     private static void continueTask() {
-        AwtUtil.getRobot().delay(15 * 1000 + AwtUtil.mRandom.nextInt(1000));
+        boolean isContinue = false;
+        while (!isContinue) {
+            //监听物资是否需要自己交
+            Color c = AwtUtil.getRobot().getPixelColor(ConstantScreen.SEND_MATERIALS_X,ConstantScreen.SEND_MATERIALS_Y);
+            if((c.getRed() == 230 || (c.getRed() == 237)) && c.getGreen() == 252 && c.getBlue() == 254){
+                //需要自己交
+                needSendBySelf();
+            }
+            Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_X,ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_Y);
+            if((pixelColor.getRed() == 230 || (pixelColor.getRed() == 237)) && pixelColor.getGreen() == 252 && pixelColor.getBlue() == 254){
+                isContinue = true;
+            }
+        }
+        AwtUtil.getRobot().delay( 1000 + AwtUtil.mRandom.nextInt(1000));
         ScreenUtil.getScreenShot(ConstantScreen.ROOT_X, ConstantScreen.ROOT_Y, 1024, 768, null);
         SwPointBean swPointBean = ImageProcessingUtil.matchTemplate(DIR_RES + "source/continue_task.jpg", DIR_RES + "buffer/screenshot.jpg");
         //点击继续任务
@@ -399,6 +416,23 @@ public class SmMain {
         if ((pixelColor.getRed() == 230 || (pixelColor.getRed() == 237)) && pixelColor.getGreen() == 252 && pixelColor.getBlue() == 254) {
             AwtUtil.getRobot().mouseMove(ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_X, ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_Y);
             AwtUtil.performLeftMouseClick(2);
+        }
+    }
+
+    /**
+     * 需要自己交物资
+     */
+    private static void needSendBySelf(){
+        //一个个点过去
+        AwtUtil.getRobot().mouseMove(ConstantScreen.PACKAGE_START_X,ConstantScreen.PACKAGE_START_Y);
+        boolean isSendEnd = false;
+        while (!isSendEnd) {
+            Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.SEND_MATERIALS_HAS_CLICK_X, ConstantScreen.SEND_MATERIALS_HAS_CLICK_Y);
+            if (pixelColor.getRed() != 113 && pixelColor.getGreen() != 187 && pixelColor.getBlue() != 166) {
+                AwtUtil.getRobot().mouseMove(ConstantScreen.SEND_SURE_X, ConstantScreen.SEND_SURE_Y);
+                AwtUtil.performLeftMouseClick(1);
+                isSendEnd = true;
+            }
         }
     }
 

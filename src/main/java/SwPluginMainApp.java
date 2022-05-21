@@ -30,12 +30,12 @@ public class SwPluginMainApp {
     /**
      * 做师门开光
      */
-    private static boolean mIsDoSm = true;
+    private static boolean mIsDoSm = false;
 
     /**
      * 获取屏幕坐标点
      */
-    private static boolean mIsShowCurrentPoint = false;
+    private static boolean mIsShowCurrentPoint = true;
 
     public static Random mRandom = new Random();
 
