@@ -6,6 +6,10 @@ import utils.ThreadPoolUtil;
 import constant.ConstantSaleWord;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Random;
 
 import static org.opencv.core.Core.NATIVE_LIBRARY_NAME;
@@ -26,12 +30,12 @@ public class SwPluginMainApp {
     /**
      * 做师门开光
      */
-    private static boolean mIsDoSm = false;
+    private static boolean mIsDoSm = true;
 
     /**
      * 获取屏幕坐标点
      */
-    private static boolean mIsShowCurrentPoint = true;
+    private static boolean mIsShowCurrentPoint = false;
 
     public static Random mRandom = new Random();
 

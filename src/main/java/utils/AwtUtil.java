@@ -1,6 +1,9 @@
 package utils;
 
+import org.apache.commons.beanutils.PropertyUtilsBean;
+
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Random;
 
 public class AwtUtil {
@@ -29,5 +32,15 @@ public class AwtUtil {
             e.printStackTrace();
         }
         return mRobot;
+    }
+
+    public static void performLeftMouseClick (int times){
+        for (int i = 0 ; i < times ; i ++){
+            mRobot.delay(mRandom.nextInt(500) + 1000);
+            mRobot.mousePress(KeyEvent.BUTTON1_DOWN_MASK);
+            mRobot.delay(mRandom.nextInt(100));
+            mRobot.mouseRelease(KeyEvent.BUTTON1_DOWN_MASK);
+            mRobot.delay(500 + mRandom.nextInt(100));
+        }
     }
 }

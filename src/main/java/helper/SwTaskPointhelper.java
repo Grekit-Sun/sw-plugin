@@ -13,23 +13,23 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SwTaskPointhelper {
 
-    private static int minR = 255;
-    private static int maxR = 0;
-    private static int minG = 255;
-    private static int maxG = 0;
-    private static int minB = 255;
-    private static int maxB = 0;
+    private int minR = 255;
+    private int maxR = 0;
+    private int minG = 255;
+    private int maxG = 0;
+    private int minB = 255;
+    private int maxB = 0;
 
-    private static int mOldMinR = 255;
-    private static int mOldMaxR = 0;
-    private static int mOldMinG = 255;
-    private static int mOldMaxG = 0;
-    private static int mOldMinB = 255;
-    private static int mOldMaxB = 0;
+    private int mOldMinR = 255;
+    private int mOldMaxR = 0;
+    private int mOldMinG = 255;
+    private int mOldMaxG = 0;
+    private int mOldMinB = 255;
+    private int mOldMaxB = 0;
 
-    private static long mOldSaveFileTime = System.currentTimeMillis();
+    private long mOldSaveFileTime = System.currentTimeMillis();
 
-    private static List<String> mXyList = new CopyOnWriteArrayList<>();
+    private List<String> mXyList = new CopyOnWriteArrayList<>();
 
     /**
      * 挑战
@@ -53,12 +53,15 @@ public class SwTaskPointhelper {
 
     /**
      * 指定位置的像素值存入文件
+     *
      * @param fileHead
      * @param x
      * @param y
      */
-    public static void inputMsgToFile(String fileHead, int x, int y) {
-        mXyList.add(fileHead);
+    public void inputMsgToFile(int x, int y, String fileHead, boolean addHead) {
+        if (addHead) {
+            mXyList.add(fileHead);
+        }
 //        Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.TASK_CHALLENGE_2_X, ConstantScreen.TASK_CHALLENGE_2_Y);
         Color pixelColor = AwtUtil.getRobot().getPixelColor(x, y);
         maxR = Math.max(maxR, pixelColor.getRed());
@@ -70,12 +73,13 @@ public class SwTaskPointhelper {
         maxB = Math.max(maxB, pixelColor.getBlue());
         minB = Math.min(minB, pixelColor.getBlue());
         String xy = "(maxR:" + maxR + ",minR:" + minR + ")" + "(maxG:" + maxG + ",minG:" + minG + ")" + "(maxB:" + maxB + ",minB:" + minB + ")";
-        if (maxR != mOldMaxR && minR != mOldMinR && maxG != mOldMaxG && minG != mOldMinG && maxB != mOldMaxB && minB != mOldMinB) {
+        if (maxR != mOldMaxR || minR != mOldMinR || maxG != mOldMaxG || minG != mOldMinG || maxB != mOldMaxB || minB != mOldMinB) {
             mXyList.add(xy);
         }
-        System.out.println(xy);
-        if (System.currentTimeMillis() - mOldSaveFileTime > 30 * 1000 || mXyList.size() > 5) {
-            FileUtil.stringWriteIntoFile(mXyList, ScreenUtil.DIR_RES + "file/sm.txt");
+//        System.out.println(xy);
+        if (System.currentTimeMillis() - mOldSaveFileTime > 3 * 1000 || mXyList.size() > 5) {
+            FileUtil.appendContentToFile(mXyList, ScreenUtil.DIR_RES + "file/sm_" + fileHead + ".txt");
+            System.out.println("appendContentToFile: " + fileHead + "...");
             mXyList.clear();
         }
         mOldMaxR = maxR;
