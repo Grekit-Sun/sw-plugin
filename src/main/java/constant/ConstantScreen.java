@@ -83,14 +83,31 @@ public class ConstantScreen {
      */
     public static final int SEND_MATERIALS_X = ROOT_X + 730;
     public static final int SEND_MATERIALS_Y = ROOT_Y + 141;
+    public static final int SEND_MATERIALS_BY_SELF_X = ROOT_X + 375;
+    public static final int SEND_MATERIALS_BY_SELF_Y = ROOT_Y + 479;
     public static final int SEND_MATERIALS_HAS_CLICK_X = ROOT_X + 279;
     public static final int SEND_MATERIALS_HAS_CLICK_Y = ROOT_Y + 219;
 
     public static final int SEND_SURE_X = ROOT_X + 362;
     public static final int SEND_SURE_Y = ROOT_Y + 588;
 
-    public static final int PACKAGE_START_X = ROOT_X + 508;
-    public static final int PACKAGE_START_Y = ROOT_Y + 237;
+    public static final int PACKAGE_START_X = ROOT_X + 503;
+    public static final int PACKAGE_START_Y = ROOT_Y + 228;
+
+    public static final int PACKAGE1_ENTER_X = ROOT_X + 743;
+    public static final int PACKAGE1_ENTER_Y = ROOT_Y + 267;
+
+    public static final int PACKAGE2_ENTER_X = ROOT_X + 745;
+    public static final int PACKAGE2_ENTER_Y = ROOT_Y + 344;
+
+    /**
+     * 摄妖香
+     */
+    public static final int FRAGRANCE_X = ROOT_X + 908;
+    public static final int FRAGRANCE_Y = ROOT_Y + 711;
+
+    public static final int FRAGRANCE_HAS_X = ROOT_X + 916;
+    public static final int FRAGRANCE_HAS_Y = ROOT_Y + 88;
 
     /**
      * 关闭购买物资

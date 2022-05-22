@@ -30,12 +30,12 @@ public class SwPluginMainApp {
     /**
      * 做师门开光
      */
-    private static boolean mIsDoSm = false;
+    private static boolean mIsDoSm = true;
 
     /**
      * 获取屏幕坐标点
      */
-    private static boolean mIsShowCurrentPoint = true;
+    private static boolean mIsShowCurrentPoint = false;
 
     public static Random mRandom = new Random();
 
@@ -68,6 +68,7 @@ public class SwPluginMainApp {
      */
     private static void showCurrentPoint() {
         ThreadPoolUtil.getInstance().execute(() -> {
+            ScreenUtil.getScreenShot(1172,471,107,15,null);
             if (mIsShowCurrentPoint) {
                 while (true) {
                     try {
