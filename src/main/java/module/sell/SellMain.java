@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SellMain extends SalesWordUtil {
 
-    private static final int INTERVAL_SPEAK = 1;
+    private static final int INTERVAL_SPEAK = 15;
 
     public static void start() {
         init();
@@ -21,10 +21,10 @@ public class SellMain extends SalesWordUtil {
      * 初始化
      */
     private static void init() {
-        //开线程卖
-        startSell();
         //开个线程监听好友信息
         startFreMonitor(true);
+        //开线程卖
+        startSell();
     }
 
 
@@ -35,8 +35,7 @@ public class SellMain extends SalesWordUtil {
                 Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.FRE_X, ConstantScreen.FRE_Y);
                 if (pixelColor.getRed() != 234 && pixelColor.getGreen() != 189 && pixelColor.getBlue() != 125) {      //有好友通知
                     cnt.getAndIncrement();
-                    System.out.println("第" + cnt + "个好友来信息了...");
-                    ThreadPoolUtil.sleep(200);
+                    System.out.println("第" + cnt + "个好友来信息了..." + Thread.currentThread().getPriority());
                     synchronized (SellMain.class) {
                         //点击好友
                         AwtUtil.getRobot().mouseMove(ConstantScreen.FRE_X, ConstantScreen.FRE_Y);
@@ -51,11 +50,11 @@ public class SellMain extends SalesWordUtil {
                         AwtUtil.getRobot().mouseMove(ConstantScreen.FRE_CLOSE_X, ConstantScreen.FRE_CLOSE_Y);
                         AwtUtil.performLeftMouseClick(1);
                     }
-                    ThreadPoolUtil.sleep(5 * 1000);
 //                    Color c = AwtUtil.getRobot().getPixelColor(ConstantScreen.FRE_CLOSE_X, ConstantScreen.FRE_CLOSE_Y);
 //                    if(c.getRed() == 234 && c.getGreen() == 189 && c.getBlue() == 125){
 //                    }
                 }
+                ThreadPoolUtil.sleep(5 * 1000);
             }
         });
     }
@@ -66,6 +65,7 @@ public class SellMain extends SalesWordUtil {
     private static void startSell() {
         AtomicInteger cnt = new AtomicInteger();
         ThreadPoolUtil.getInstance().execute(() -> {
+            System.out.println("startSell:" + Thread.currentThread().getPriority());
             while (true) {
                 ThreadPoolUtil.sleep(AwtUtil.mRandom.nextInt(1000) + INTERVAL_SPEAK * 1000);
                 synchronized (SellMain.class) {

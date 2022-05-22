@@ -41,7 +41,7 @@ public class AwtUtil {
             e.printStackTrace();
         }
         int randomSleepNum = mRandom.nextInt(100);
-        int sleepTime = randomSleepNum + 200;
+        int sleepTime = randomSleepNum + 100;
         mRobot.delay(sleepTime);
     }
 

@@ -120,7 +120,6 @@ public class ConstantSaleWord {
             return mSaleWordList;
         } else {
             setSaleWord();
-            ThreadPoolUtil.sleep(200);
             System.out.println("当前没有销售话术，正在设置...");
             return getSaleWord();
         }
@@ -131,7 +130,6 @@ public class ConstantSaleWord {
             return mTellInfoList;
         } else {
             setTellInfo();
-            ThreadPoolUtil.sleep(200);
             System.out.println("当前没有告诉好友的信息，正在设置...");
             return getTellTellInfo();
         }
