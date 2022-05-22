@@ -42,12 +42,12 @@ public class ImageProcessingUtil {
         Point p2 = new Point(p1.x + src_1.cols(), p1.y + src_1.rows());
 
         //绘制
-        Imgproc.rectangle(src_2, p1, p2, new Scalar(0, 0, 255));
-        System.out.println("矩阵顶点:" + p1.toString() + "  矩阵顶点:" + p2.toString());
-
-        HighGui.imshow("原图", src_2);
-        HighGui.imshow("模板", src_1);
-        HighGui.waitKey(10);
+//        Imgproc.rectangle(src_2, p1, p2, new Scalar(0, 0, 255));
+//        System.out.println("矩阵顶点:" + p1.toString() + "  矩阵顶点:" + p2.toString());
+//
+//        HighGui.imshow("原图", src_2);
+//        HighGui.imshow("模板", src_1);
+//        HighGui.waitKey(10);
 
         pointBean.x = (int)p1.x;
         pointBean.y = (int)p1.y;

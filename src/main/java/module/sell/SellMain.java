@@ -7,10 +7,11 @@ import utils.SalesWordUtil;
 import utils.ThreadPoolUtil;
 
 import java.awt.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SellMain extends SalesWordUtil {
 
-    private static final int INTERVAL_SPEAK = 50;
+    private static final int INTERVAL_SPEAK = 1;
 
     public static void start() {
         init();
@@ -28,11 +29,13 @@ public class SellMain extends SalesWordUtil {
 
 
     private static void startFreMonitor(boolean isStart) {
+        AtomicInteger cnt = new AtomicInteger();
         ThreadPoolUtil.getInstance().execute(() -> {
             while (isStart) {
                 Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.FRE_X, ConstantScreen.FRE_Y);
                 if (pixelColor.getRed() != 234 && pixelColor.getGreen() != 189 && pixelColor.getBlue() != 125) {      //有好友通知
-                    System.out.println("好友来信息了...");
+                    cnt.getAndIncrement();
+                    System.out.println("第" + cnt + "个好友来信息了...");
                     ThreadPoolUtil.sleep(200);
                     synchronized (SellMain.class) {
                         //点击好友
@@ -61,10 +64,15 @@ public class SellMain extends SalesWordUtil {
      * 世界喊
      */
     private static void startSell() {
+        AtomicInteger cnt = new AtomicInteger();
         ThreadPoolUtil.getInstance().execute(() -> {
-            ThreadPoolUtil.sleep(AwtUtil.mRandom.nextInt(10 * 1000) + INTERVAL_SPEAK * 1000);
-            synchronized (SellMain.class) {
-                shoutOnTheWorld(ConstantSaleWord.getSaleWord());
+            while (true) {
+                ThreadPoolUtil.sleep(AwtUtil.mRandom.nextInt(1000) + INTERVAL_SPEAK * 1000);
+                synchronized (SellMain.class) {
+                    shoutOnTheWorld(ConstantSaleWord.getSaleWord());
+                    cnt.getAndIncrement();
+                    System.out.println("发出了第 ：" + cnt + " ...");
+                }
             }
         });
     }

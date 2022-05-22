@@ -120,11 +120,7 @@ public class ConstantSaleWord {
             return mSaleWordList;
         } else {
             setSaleWord();
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            ThreadPoolUtil.sleep(200);
             System.out.println("当前没有销售话术，正在设置...");
             return getSaleWord();
         }
