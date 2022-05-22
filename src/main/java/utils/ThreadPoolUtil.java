@@ -96,7 +96,7 @@ public final class ThreadPoolUtil {
         executor.execute(runnable);
     }
 
-    public void sleep(long millis){
+    public static void sleep(long millis){
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {

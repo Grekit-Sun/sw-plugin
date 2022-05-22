@@ -34,6 +34,17 @@ public class AwtUtil {
         return mRobot;
     }
 
+    public static void setRandomDelay(){
+        try {
+            if (mRobot == null) mRobot = new Robot();
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
+        int randomSleepNum = mRandom.nextInt(100);
+        int sleepTime = randomSleepNum + 500;
+        mRobot.delay(sleepTime);
+    }
+
     public static void performLeftMouseClick (int times){
         for (int i = 0 ; i < times ; i ++){
             mRobot.delay(mRandom.nextInt(500) + 1000);

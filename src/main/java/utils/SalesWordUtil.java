@@ -14,56 +14,58 @@ import java.util.Random;
  */
 public class SalesWordUtil {
 
-    public SalesWordUtil() {
-    }
-
     /**
-     * 鼠标点击神武，使其获取程序焦点
+     * 告诉价格
+     * @param keyWords
      */
-    private void focusOnSw() {
-
+    protected static void tellPreAndV(List<Integer> keyWords){
+        for(Integer keyWord : keyWords){
+            AwtUtil.getRobot().keyPress(keyWord);
+            AwtUtil.setRandomDelay();
+            AwtUtil.getRobot().keyRelease(keyWord);
+            AwtUtil.setRandomDelay();
+        }
     }
 
     /**
      * 喊话
      */
-    public static void shoutOnTheWorld(List<Integer> keyWords) {
+    protected static void shoutOnTheWorld(List<Integer> keyWords) {
         int firstKey = -1111;
         for (int keyWord : keyWords) {
             if (KeyEvent.VK_SHIFT == keyWord) {
                 firstKey = KeyEvent.VK_SHIFT;
             } else if (firstKey != -1111) {      //开始组合字
                 AwtUtil.getRobot().keyPress(firstKey);
-                setRandomSleep();
+                AwtUtil.setRandomDelay();
                 AwtUtil.getRobot().keyPress(keyWord);
-                setRandomSleep();
+                AwtUtil.setRandomDelay();
                 AwtUtil.getRobot().keyRelease(firstKey);
-                setRandomSleep();
+                AwtUtil.setRandomDelay();
                 AwtUtil.getRobot().keyRelease(keyWord);
-                setRandomSleep();
+                AwtUtil.setRandomDelay();
                 firstKey = -1111;
             } else {             //单个字
                 AwtUtil.getRobot().keyPress(keyWord);
-                setRandomSleep();
+                AwtUtil.setRandomDelay();
                 AwtUtil.getRobot().keyRelease(keyWord);
-                setRandomSleep();
+                AwtUtil.setRandomDelay();
             }
-
         }
     }
 
     /**
      * 随机休眠防止被检测
      */
-    private static void setRandomSleep() {
-        int randomSleepNum = AwtUtil.mRandom.nextInt(100);
-        int sleepTime = randomSleepNum + 200;
-        System.out.println("random sleep num:" + randomSleepNum + "  sleep time:" + sleepTime + "ms..."
-                + "\n Current thread name:" + Thread.currentThread().getName());
-        try {
-            Thread.sleep(sleepTime);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+//    private static void setRandomSleep() {
+//        int randomSleepNum = AwtUtil.mRandom.nextInt(100);
+//        int sleepTime = randomSleepNum + 200;
+//        System.out.println("random sleep num:" + randomSleepNum + "  sleep time:" + sleepTime + "ms..."
+//                + "\n Current thread name:" + Thread.currentThread().getName());
+//        try {
+//            Thread.sleep(sleepTime);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

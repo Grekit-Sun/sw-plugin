@@ -1,3 +1,4 @@
+import module.sell.SellMain;
 import module.sm.SmMain;
 import utils.AwtUtil;
 import utils.SalesWordUtil;
@@ -25,12 +26,12 @@ public class SwPluginMainApp {
     /**
      * 世界喊话开关
      */
-    private static boolean mIsSaleOnTheWorld = false;
+    private static boolean mIsSaleOnTheWorld = true;
 
     /**
      * 做师门开光
      */
-    private static boolean mIsDoSm = true;
+    private static boolean mIsDoSm = false;
 
     /**
      * 获取屏幕坐标点
@@ -38,8 +39,6 @@ public class SwPluginMainApp {
     private static boolean mIsShowCurrentPoint = false;
 
     public static Random mRandom = new Random();
-
-    private static final int INTERVAL_SPEAK = 50;
 
     public static void main(String[] args) {
         //init robot
@@ -88,13 +87,8 @@ public class SwPluginMainApp {
      */
     private static void shoutOnTheWorld() {
         ThreadPoolUtil.getInstance().execute(() -> {
-            while (mIsSaleOnTheWorld) {     //世界卖钱
-                try {
-                    Thread.sleep(mRandom.nextInt(10 * 1000) + INTERVAL_SPEAK * 1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                SalesWordUtil.shoutOnTheWorld(ConstantSaleWord.getSaleWord());
+            if(mIsSaleOnTheWorld){   //世界卖钱
+                SellMain.start();
             }
         });
     }

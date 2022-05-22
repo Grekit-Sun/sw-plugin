@@ -116,6 +116,16 @@ public class ConstantScreen {
     public static final int CLOSE_BUY_MATERIALS_Y = ROOT_Y + 152;
 
     /**
+     * 好友
+     */
+    public static final int FRE_X = ROOT_X + 869;
+    public static final int FRE_Y = ROOT_Y + 758;
+    public static final int FRE_DIAG_X = ROOT_X + 355;
+    public static final int FRE_DIAG_Y = ROOT_Y + 542;
+    public static final int FRE_CLOSE_X = ROOT_X + 720;
+    public static final int FRE_CLOSE_Y = ROOT_Y + 141;
+
+    /**
      * 信誉购买
      */
     public static final int BUY_BY_CREDIT_X = ROOT_X + 672;
