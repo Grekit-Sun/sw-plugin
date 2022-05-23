@@ -5,6 +5,7 @@ import com.lowagie.text.pdf.PRAcroForm;
 import constant.ConstantScreen;
 import helper.SwTaskPointhelper;
 import models.*;
+import module.change.ChangeMain;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.opencv.core.Mat;
@@ -53,6 +54,9 @@ public class SmMain {
     private static long lastCatchPetTime = 0;
     private static long lastCollectTime = 0;
     private static long lastChallengeTime = 0;
+
+    private static boolean isTenthTask;
+    private static boolean mIsNeedChange;
 
     private static boolean mIsInTradingCenter;
 
@@ -144,7 +148,7 @@ public class SmMain {
             while (isStart) {
                 //判断是否已经点了
                 Color c = AwtUtil.getRobot().getPixelColor(ConstantScreen.FRAGRANCE_HAS_X, ConstantScreen.FRAGRANCE_HAS_Y);
-                if(c.getRed() == 82 && c.getGreen() == 81 && c.getBlue() == 97){
+                if (c.getRed() == 82 && c.getGreen() == 81 && c.getBlue() == 97) {
                     System.out.println("已经点香了...");
                     ThreadPoolUtil.getInstance().sleep(10 * 60 * 1000);
                 }
@@ -152,12 +156,12 @@ public class SmMain {
                 if ((pixelColor.getRed() == 219 && pixelColor.getGreen() == 113 && pixelColor.getBlue() == 45)
                         || (pixelColor.getRed() == 255 && pixelColor.getGreen() == 125 && pixelColor.getBlue() == 71)) {
 //                    synchronized (SmMain.class) {
-                        AwtUtil.getRobot().mouseMove(ConstantScreen.FRAGRANCE_X, ConstantScreen.FRAGRANCE_Y);
-                        AwtUtil.performLeftMouseClick(1);
-                        ThreadPoolUtil.getInstance().sleep(59 * 60 * 1000);
+                    AwtUtil.getRobot().mouseMove(ConstantScreen.FRAGRANCE_X, ConstantScreen.FRAGRANCE_Y);
+                    AwtUtil.performLeftMouseClick(1);
+                    ThreadPoolUtil.getInstance().sleep(59 * 60 * 1000);
 //                    }
                 }
-                System.out.println("摄妖香：" +ConstantScreen.FRAGRANCE_HAS_X + "  " +  ConstantScreen.FRAGRANCE_HAS_Y+ pixelColor);
+//                System.out.println("摄妖香：" + ConstantScreen.FRAGRANCE_HAS_X + "  " + ConstantScreen.FRAGRANCE_HAS_Y + pixelColor);
                 ThreadPoolUtil.getInstance().sleep(500);
             }
         });
@@ -185,6 +189,7 @@ public class SmMain {
                         && r2 == 255 && g2 == 0 && b2 == 0
                         && r3 >= 228 && r3 <= 252 && g3 == 0 && b3 == 0) {
                     System.out.println("Current task is the tenth...");
+                    isTenthTask = true;
                 }
                 try {
                     Thread.sleep(500);
@@ -301,13 +306,11 @@ public class SmMain {
         AwtUtil.getRobot().mouseMove(canClickXy.x, canClickXy.y);
         AwtUtil.getRobot().delay(1000 + AwtUtil.mRandom.nextInt(200));
         AwtUtil.performLeftMouseClick(2);
-        //先点击一下背包1
-        AwtUtil.getRobot().mouseMove(ConstantScreen.PACKAGE1_ENTER_X,ConstantScreen.PACKAGE1_ENTER_Y);
-        AwtUtil.performLeftMouseClick(1);
         continueTask();
     }
 
-    /**´
+    /**
+     * ´
      * 身上本来就有
      */
     private static boolean hasThisMaterial() {
@@ -332,6 +335,14 @@ public class SmMain {
             AwtUtil.getRobot().delay(500 + AwtUtil.mRandom.nextInt(300));
             //点击购买
             AwtUtil.performLeftMouseClick(1);
+            ThreadPoolUtil.sleep(1000);
+            //判断是不是单价过高提示
+            Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.SURE_BUY_MATERIALS_X, ConstantScreen.SURE_BUY_MATERIALS_Y);
+            if(pixelColor.getRed() == 101 && pixelColor.getGreen() == 230 && pixelColor.getBlue() == 190){
+                AwtUtil.getRobot().mouseMove(ConstantScreen.SURE_BUY_MATERIALS_X, ConstantScreen.SURE_BUY_MATERIALS_Y);
+                AwtUtil.getRobot().delay(200);
+                AwtUtil.performLeftMouseClick(1);
+            }
             return true;
         } else {
             //没找到物资，点下一页
@@ -427,14 +438,21 @@ public class SmMain {
     private static void continueTask() {
         boolean isContinue = false;
         while (!isContinue) {
+            Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_X, ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_Y);
+            if ((pixelColor.getRed() == 230 || (pixelColor.getRed() == 237)) && pixelColor.getGreen() == 252 && pixelColor.getBlue() == 254) {
+                isContinue = true;
+            }
+            ThreadPoolUtil.sleep(500);
+        }
+        if (TASK_COLLECT.equals(CURRENT_TASK)) {
             //监听物资是否需要自己交1
             //识别下确认点击的任务的位置
             ScreenUtil.getScreenShot(ConstantScreen.ROOT_X, ConstantScreen.ROOT_Y, 1024, 768, null);
             SwPointBean bean = ImageProcessingUtil.matchTemplate(DIR_RES + "source/report_task.jpg", DIR_RES + "buffer/screenshot.jpg");
             Color co = AwtUtil.getRobot().getPixelColor(bean.x + 375, bean.y + 479);
-            if (co.getRed() == 237  && co.getGreen() == 243 && co.getBlue() == 0) {
+            if (co.getRed() == 237 && co.getGreen() == 243 && co.getBlue() == 0) {
                 //点击交任务
-                AwtUtil.getRobot().mouseMove(ConstantScreen.SEND_MATERIALS_BY_SELF_X,ConstantScreen.SEND_MATERIALS_BY_SELF_Y);
+                AwtUtil.getRobot().mouseMove(ConstantScreen.SEND_MATERIALS_BY_SELF_X, ConstantScreen.SEND_MATERIALS_BY_SELF_Y);
                 AwtUtil.performLeftMouseClick(1);
                 //识别下确认点击的任务的位置
                 ScreenUtil.getScreenShot(ConstantScreen.ROOT_X, ConstantScreen.ROOT_Y, 1024, 768, null);
@@ -450,10 +468,6 @@ public class SmMain {
                 //需要自己交
                 needSendBySelf();
             }
-            Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_X, ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_Y);
-            if ((pixelColor.getRed() == 230 || (pixelColor.getRed() == 237)) && pixelColor.getGreen() == 252 && pixelColor.getBlue() == 254) {
-                isContinue = true;
-            }
         }
         AwtUtil.getRobot().delay(1000 + AwtUtil.mRandom.nextInt(1000));
         ScreenUtil.getScreenShot(ConstantScreen.ROOT_X, ConstantScreen.ROOT_Y, 1024, 768, null);
@@ -468,12 +482,28 @@ public class SmMain {
             AwtUtil.getRobot().mouseMove(ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_X, ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_Y);
             AwtUtil.performLeftMouseClick(2);
         }
+        if (mIsNeedChange) {
+            synchronized (SmMain.class) {
+                ChangeMain.ChangePeople();
+                mIsNeedChange = false;
+                isTenthTask = false;
+            }
+        }
+        //判断是否为第10环
+        if (isTenthTask) {
+            synchronized (SmMain.class) {
+                mIsNeedChange = true;
+            }
+        }
     }
 
     /**
      * 需要自己交物资
      */
     private static void needSendBySelf() {
+        //先点击一下背包1
+        AwtUtil.getRobot().mouseMove(ConstantScreen.PACKAGE1_ENTER_X, ConstantScreen.PACKAGE1_ENTER_Y);
+        AwtUtil.performLeftMouseClick(1);
         //一个个点过去
         clickAllPackage();
         //翻页点
@@ -499,10 +529,10 @@ public class SmMain {
                 Color pixelColor = AwtUtil.getRobot().getPixelColor(i, j);
                 if (pixelColor.getRed() == 85 && pixelColor.getGreen() == 143 && pixelColor.getBlue() == 147) {
                     System.out.println("处于背包的不可点击的地方... return");
-                    cntNoUse ++;
+                    cntNoUse++;
                     i = i + 48;
-                    j =  ConstantScreen.PACKAGE_START_Y;
-                    if(cntNoUse == 5){
+                    j = ConstantScreen.PACKAGE_START_Y;
+                    if (cntNoUse == 5) {
                         return;
                     }
                 }

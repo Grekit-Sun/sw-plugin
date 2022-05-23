@@ -6,8 +6,31 @@ public class ConstantScreen {
      * 游戏关闭按钮处的坐标
      * 关闭按钮的中心偏右下的点
      */
-    public static final int ROOT_X = 774;
-    public static final int ROOT_Y = 78;
+    public static final int ROOT_X = 766;
+    public static final int ROOT_Y = 103;
+
+    /**
+     * 切换角色
+     */
+    public static final int RESTART_X = ROOT_X + 378;
+    public static final int RESTART_Y = ROOT_Y + 464;
+    public static final int START1_X = ROOT_X + 851;
+    public static final int START1_Y = ROOT_Y + 334;
+    public static final int START2_X = ROOT_X + 502;
+    public static final int START2_Y = ROOT_Y + 469;
+    public static final int CHANGE_PEO_X = ROOT_X + 322;
+    public static final int CHANGE_PEO_Y = ROOT_Y + 452;
+    public static final int START3_X = ROOT_X + 399;
+    public static final int START3_Y = ROOT_Y + 692;
+
+    /**
+     * 切换账号
+     */
+    public static final int CHANGE1_X = ROOT_X + 628;
+    public static final int CHANGE1_Y = ROOT_Y + 349;
+    public static final int CHANGE2_X = ROOT_X + 491;
+    public static final int CHANGE2_Y = ROOT_Y + 384;
+
     /**
      * 挑战
      */
@@ -77,6 +100,12 @@ public class ConstantScreen {
      */
     public static final int BUY_MATERIALS_X = ROOT_X + 541;
     public static final int BUY_MATERIALS_Y = ROOT_Y + 604;
+
+    /**
+     * 确认（过高）购买物资
+     */
+    public static final int SURE_BUY_MATERIALS_X = ROOT_X + 419;
+    public static final int SURE_BUY_MATERIALS_Y = ROOT_Y + 428;
 
     /**
      * 给予物资

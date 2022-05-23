@@ -26,12 +26,12 @@ public class SwPluginMainApp {
     /**
      * 世界喊话开关
      */
-    private static boolean mIsSaleOnTheWorld = true;
+    private static boolean mIsSaleOnTheWorld = false;
 
     /**
      * 做师门开光
      */
-    private static boolean mIsDoSm = false;
+    private static boolean mIsDoSm = true;
 
     /**
      * 获取屏幕坐标点
