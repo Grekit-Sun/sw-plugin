@@ -6,8 +6,8 @@ public class ConstantScreen {
      * 游戏关闭按钮处的坐标
      * 关闭按钮的中心偏右下的点
      */
-    public static final int ROOT_X = 782;
-    public static final int ROOT_Y = 145;
+    public static final int ROOT_X = 758;
+    public static final int ROOT_Y = 62;
 
     /**
      * 切换角色

@@ -5,6 +5,9 @@ import utils.AwtUtil;
 
 public class ChangeMain {
 
+    /**
+     * 切换人物
+     */
     public static void ChangePeople(){
         AwtUtil.getRobot().mouseMove(ConstantScreen.ROOT_X,ConstantScreen.ROOT_Y);
         AwtUtil.performLeftMouseClick(1);
@@ -29,5 +32,11 @@ public class ChangeMain {
         AwtUtil.getRobot().mouseMove(ConstantScreen.START3_X,ConstantScreen.START3_Y);
         AwtUtil.performLeftMouseClick(1);
         AwtUtil.getRobot().delay(5000);
+    }
+
+    /**
+     * 切换账号
+     */
+    public static void changeAccount(){
     }
 }

@@ -52,6 +52,8 @@ public class SmMain {
     private final static String TASK_COLLECT = "collect";
     private final static String TASK_CATCH_PET = "catch_pet";
 
+    private static int mCntAccount;
+
     private static String CURRENT_TASK;
 
     private static long lastCatchPetTime = 0;
@@ -350,7 +352,7 @@ public class SmMain {
             ThreadPoolUtil.sleep(3000);
             //判断是不是单价过高提示
             Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.SURE_BUY_MATERIALS_X, ConstantScreen.SURE_BUY_MATERIALS_Y);
-            if(pixelColor.getRed() == 101 && pixelColor.getGreen() == 230 && pixelColor.getBlue() == 190){
+            if (pixelColor.getRed() == 101 && pixelColor.getGreen() == 230 && pixelColor.getBlue() == 190) {
                 System.out.println("弹出单价过高提示...");
                 AwtUtil.getRobot().mouseMove(ConstantScreen.SURE_BUY_MATERIALS_X, ConstantScreen.SURE_BUY_MATERIALS_Y);
                 AwtUtil.getRobot().delay(200);
@@ -497,7 +499,12 @@ public class SmMain {
         }
         if (mIsNeedChange) {
             synchronized (SmMain.class) {
-                ChangeMain.ChangePeople();
+                mCntAccount++;
+                if (mCntAccount % 4 == 0) {
+                    ChangeMain.changeAccount();
+                } else {
+                    ChangeMain.ChangePeople();
+                }
                 mIsNeedChange = false;
                 isTenthTask = false;
                 //释放摄妖香的锁
