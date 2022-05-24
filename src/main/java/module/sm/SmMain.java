@@ -27,6 +27,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static org.opencv.core.CvType.CV_8UC3;
 import static org.opencv.imgproc.Imgproc.COLOR_RGB2BGR;
@@ -84,6 +87,9 @@ public class SmMain {
     private static BufferedImage mContinueTaskImg = readImage(DIR_RES + "source/continue_task.jpg");
     private static BufferedImage mChallengeImg = readImage(DIR_RES + "source/challenge.jpg");
     private static ArrayList<BufferedImage> mSmImageList;
+
+    private static Lock mLock = new ReentrantLock();
+    private static Condition mCondition = mLock.newCondition();
 
     static {
         mSmImageList = new ArrayList<BufferedImage>();
@@ -150,7 +156,12 @@ public class SmMain {
                 Color c = AwtUtil.getRobot().getPixelColor(ConstantScreen.FRAGRANCE_HAS_X, ConstantScreen.FRAGRANCE_HAS_Y);
                 if (c.getRed() == 82 && c.getGreen() == 81 && c.getBlue() == 97) {
                     System.out.println("已经点香了...");
-                    ThreadPoolUtil.getInstance().sleep(10 * 60 * 1000);
+                    // 线程挂起
+                    try {
+                        mCondition.await();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.FRAGRANCE_X, ConstantScreen.FRAGRANCE_Y);
                 if ((pixelColor.getRed() == 219 && pixelColor.getGreen() == 113 && pixelColor.getBlue() == 45)
@@ -335,10 +346,11 @@ public class SmMain {
             AwtUtil.getRobot().delay(500 + AwtUtil.mRandom.nextInt(300));
             //点击购买
             AwtUtil.performLeftMouseClick(1);
-            ThreadPoolUtil.sleep(1000);
+            ThreadPoolUtil.sleep(3000);
             //判断是不是单价过高提示
             Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.SURE_BUY_MATERIALS_X, ConstantScreen.SURE_BUY_MATERIALS_Y);
             if(pixelColor.getRed() == 101 && pixelColor.getGreen() == 230 && pixelColor.getBlue() == 190){
+                System.out.println("弹出单价过高提示...");
                 AwtUtil.getRobot().mouseMove(ConstantScreen.SURE_BUY_MATERIALS_X, ConstantScreen.SURE_BUY_MATERIALS_Y);
                 AwtUtil.getRobot().delay(200);
                 AwtUtil.performLeftMouseClick(1);
@@ -487,6 +499,8 @@ public class SmMain {
                 ChangeMain.ChangePeople();
                 mIsNeedChange = false;
                 isTenthTask = false;
+                //释放摄妖香的锁
+                mCondition.signalAll();
             }
         }
         //判断是否为第10环

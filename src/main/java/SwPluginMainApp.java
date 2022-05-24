@@ -36,9 +36,7 @@ public class SwPluginMainApp {
     /**
      * 获取屏幕坐标点
      */
-    private static boolean mIsShowCurrentPoint = false;
-
-    public static Random mRandom = new Random();
+    private static boolean mIsShowCurrentPoint = true;
 
     public static void main(String[] args) {
         //init robot
