@@ -1,0 +1,16 @@
+收集物资2
+(maxR:239,minR:239)(maxG:237,minG:237)(maxB:0,minB:0)
+(maxR:239,minR:238)(maxG:238,minG:237)(maxB:0,minB:0)
+(maxR:242,minR:238)(maxG:239,minG:237)(maxB:0,minB:0)
+(maxR:243,minR:238)(maxG:245,minG:237)(maxB:0,minB:0)
+(maxR:243,minR:237)(maxG:245,minG:237)(maxB:0,minB:0)
+(maxR:243,minR:236)(maxG:245,minG:237)(maxB:0,minB:0)
+(maxR:243,minR:235)(maxG:245,minG:237)(maxB:0,minB:0)
+(maxR:243,minR:235)(maxG:245,minG:236)(maxB:0,minB:0)
+(maxR:243,minR:234)(maxG:245,minG:236)(maxB:0,minB:0)
+(maxR:243,minR:234)(maxG:246,minG:236)(maxB:0,minB:0)
+(maxR:243,minR:233)(maxG:246,minG:236)(maxB:0,minB:0)
+(maxR:243,minR:232)(maxG:246,minG:236)(maxB:0,minB:0)
+(maxR:243,minR:231)(maxG:246,minG:236)(maxB:0,minB:0)
+收集物资2
+(maxR:43,minR:43)(maxG:43,minG:43)(maxB:43,minB:43)

@@ -789,7 +789,7 @@ public class SmMain {
 //            BufferedImage res = new BufferedImage(bimg.getWidth(), bimg.getHeight(), BufferedImage.TYPE_INT_RGB);
 //            res.createGraphics().drawImage(bimg, 0, 0, Color.WHITE, null); //背景填充色设置为白色，也可以设置为其他颜色比如粉色Color.PINK
             //3. 保存成jpg到本地
-//            File output = new File(DIR_RES + "source/cat_pet1111.jpg");
+//            File output = new File(DIR_RES + "source/cat_pet.jpg");
 //            ImageIO.write(res, "jpg", output);
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,0 +1,14 @@
+捕捉宠物3
+(maxR:241,minR:241)(maxG:246,minG:246)(maxB:0,minB:0)
+(maxR:245,minR:241)(maxG:248,minG:246)(maxB:0,minB:0)
+(maxR:245,minR:241)(maxG:249,minG:246)(maxB:0,minB:0)
+(maxR:246,minR:241)(maxG:249,minG:246)(maxB:0,minB:0)
+(maxR:246,minR:241)(maxG:249,minG:245)(maxB:0,minB:0)
+(maxR:246,minR:241)(maxG:249,minG:244)(maxB:0,minB:0)
+(maxR:246,minR:241)(maxG:250,minG:244)(maxB:0,minB:0)
+(maxR:247,minR:241)(maxG:250,minG:244)(maxB:0,minB:0)
+(maxR:247,minR:240)(maxG:250,minG:244)(maxB:0,minB:0)
+捕捉宠物3
+(maxR:43,minR:43)(maxG:43,minG:43)(maxB:43,minB:43)
+(maxR:248,minR:43)(maxG:245,minG:43)(maxB:43,minB:0)
+(maxR:248,minR:43)(maxG:249,minG:43)(maxB:43,minB:0)

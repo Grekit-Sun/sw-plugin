@@ -1,0 +1,11 @@
+挑战2
+(maxR:236,minR:236)(maxG:238,minG:238)(maxB:0,minB:0)
+(maxR:236,minR:223)(maxG:238,minG:225)(maxB:0,minB:0)
+(maxR:236,minR:220)(maxG:238,minG:225)(maxB:0,minB:0)
+(maxR:236,minR:220)(maxG:239,minG:225)(maxB:0,minB:0)
+(maxR:236,minR:218)(maxG:239,minG:225)(maxB:0,minB:0)
+(maxR:236,minR:218)(maxG:239,minG:224)(maxB:0,minB:0)
+(maxR:237,minR:218)(maxG:239,minG:224)(maxB:0,minB:0)
+(maxR:237,minR:218)(maxG:240,minG:224)(maxB:0,minB:0)
+(maxR:237,minR:218)(maxG:240,minG:223)(maxB:0,minB:0)
+(maxR:238,minR:218)(maxG:240,minG:223)(maxB:0,minB:0)

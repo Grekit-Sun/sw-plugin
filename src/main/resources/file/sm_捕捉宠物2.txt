@@ -1,0 +1,14 @@
+捕捉宠物2
+(maxR:231,minR:231)(maxG:237,minG:237)(maxB:0,minB:0)
+(maxR:242,minR:231)(maxG:247,minG:237)(maxB:0,minB:0)
+(maxR:242,minR:231)(maxG:247,minG:235)(maxB:0,minB:0)
+(maxR:242,minR:231)(maxG:247,minG:234)(maxB:0,minB:0)
+(maxR:242,minR:230)(maxG:247,minG:234)(maxB:0,minB:0)
+(maxR:242,minR:228)(maxG:247,minG:234)(maxB:0,minB:0)
+(maxR:243,minR:228)(maxG:247,minG:234)(maxB:0,minB:0)
+捕捉宠物2
+(maxR:43,minR:43)(maxG:43,minG:43)(maxB:43,minB:43)
+(maxR:235,minR:43)(maxG:236,minG:43)(maxB:43,minB:0)
+(maxR:238,minR:43)(maxG:240,minG:43)(maxB:43,minB:0)
+(maxR:242,minR:43)(maxG:240,minG:43)(maxB:43,minB:0)
+(maxR:244,minR:43)(maxG:240,minG:43)(maxB:43,minB:0)

@@ -1,0 +1,2 @@
+第10环2
+(maxR:255,minR:255)(maxG:0,minG:0)(maxB:0,minB:0)

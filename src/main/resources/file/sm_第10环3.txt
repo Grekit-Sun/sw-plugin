@@ -1,0 +1,10 @@
+第10环3
+(maxR:237,minR:237)(maxG:0,minG:0)(maxB:0,minB:0)
+(maxR:237,minR:236)(maxG:0,minG:0)(maxB:0,minB:0)
+(maxR:237,minR:233)(maxG:0,minG:0)(maxB:0,minB:0)
+(maxR:251,minR:233)(maxG:0,minG:0)(maxB:0,minB:0)
+(maxR:251,minR:232)(maxG:0,minG:0)(maxB:0,minB:0)
+(maxR:251,minR:230)(maxG:0,minG:0)(maxB:0,minB:0)
+(maxR:251,minR:229)(maxG:0,minG:0)(maxB:0,minB:0)
+(maxR:251,minR:228)(maxG:0,minG:0)(maxB:0,minB:0)
+(maxR:252,minR:228)(maxG:0,minG:0)(maxB:0,minB:0)
