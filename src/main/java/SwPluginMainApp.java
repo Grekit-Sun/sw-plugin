@@ -1,17 +1,8 @@
 import module.sell.SellMain;
 import module.sm.SmMain;
 import utils.AwtUtil;
-import utils.SalesWordUtil;
 import utils.ScreenUtil;
 import utils.ThreadPoolUtil;
-import constant.ConstantSaleWord;
-
-import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Random;
 
 import static org.opencv.core.Core.NATIVE_LIBRARY_NAME;
 
@@ -65,7 +56,6 @@ public class SwPluginMainApp {
      */
     private static void showCurrentPoint() {
         ThreadPoolUtil.getInstance().execute(() -> {
-            ScreenUtil.getScreenShot(1172,471,107,15,null);
             if (mIsShowCurrentPoint) {
                 while (true) {
                     try {

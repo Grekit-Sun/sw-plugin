@@ -166,14 +166,15 @@ public class SmMain {
                 Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.FRAGRANCE_X, ConstantScreen.FRAGRANCE_Y);
                 if ((pixelColor.getRed() == 219 && pixelColor.getGreen() == 113 && pixelColor.getBlue() == 45)
                         || (pixelColor.getRed() == 255 && pixelColor.getGreen() == 125 && pixelColor.getBlue() == 71)) {
-//                    synchronized (SmMain.class) {
                     AwtUtil.getRobot().mouseMove(ConstantScreen.FRAGRANCE_X, ConstantScreen.FRAGRANCE_Y);
                     AwtUtil.performLeftMouseClick(1);
-                    ThreadPoolUtil.getInstance().sleep(59 * 60 * 1000);
-//                    }
+                    // 线程挂起
+                    try {
+                        mCondition.await();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-//                System.out.println("摄妖香：" + ConstantScreen.FRAGRANCE_HAS_X + "  " + ConstantScreen.FRAGRANCE_HAS_Y + pixelColor);
-                ThreadPoolUtil.getInstance().sleep(500);
             }
         });
     }
