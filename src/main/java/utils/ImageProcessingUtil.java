@@ -33,7 +33,7 @@ public class ImageProcessingUtil {
         Point minloc = result_m.minLoc;
         double maxVal = result_m.maxVal;
         double minVal = result_m.minVal;
-        System.out.println("maxVal:" + maxVal + "  minVal:" + minVal);
+//        System.out.println("maxVal:" + maxVal + "  minVal:" + minVal);
         //获取坐标
         Point p1;
         //如果是平方不同或者归一化平方不同,那么就取最小值
@@ -42,17 +42,17 @@ public class ImageProcessingUtil {
         Point p2 = new Point(p1.x + src_1.cols(), p1.y + src_1.rows());
 
         //绘制
-//        Imgproc.rectangle(src_2, p1, p2, new Scalar(0, 0, 255));
-//        System.out.println("矩阵顶点:" + p1.toString() + "  矩阵顶点:" + p2.toString());
-//
-//        HighGui.imshow("原图", src_2);
-//        HighGui.imshow("模板", src_1);
-//        HighGui.waitKey(10);
+        Imgproc.rectangle(src_2, p1, p2, new Scalar(0, 0, 255));
+        System.out.println("矩阵顶点:" + p1.toString() + "  矩阵顶点:" + p2.toString());
+
+        HighGui.imshow("原图", src_2);
+        HighGui.imshow("模板", src_1);
+        HighGui.waitKey(10);
 
         pointBean.x = (int)p1.x;
         pointBean.y = (int)p1.y;
         pointBean.width = src_1.cols();
-        pointBean.heigt = src_1.rows();
+        pointBean.height = src_1.rows();
         return pointBean;
     }
 

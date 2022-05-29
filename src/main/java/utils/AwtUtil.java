@@ -41,17 +41,17 @@ public class AwtUtil {
             e.printStackTrace();
         }
         int randomSleepNum = mRandom.nextInt(100);
-        int sleepTime = randomSleepNum + 100;
+        int sleepTime = randomSleepNum + 200;
         mRobot.delay(sleepTime);
     }
 
     public static void performLeftMouseClick (int times){
         for (int i = 0 ; i < times ; i ++){
-            mRobot.delay(mRandom.nextInt(500) + 1000);
+            setRandomDelay();
             mRobot.mousePress(KeyEvent.BUTTON1_DOWN_MASK);
-            mRobot.delay(mRandom.nextInt(100));
+            setRandomDelay();
             mRobot.mouseRelease(KeyEvent.BUTTON1_DOWN_MASK);
-            mRobot.delay(500 + mRandom.nextInt(100));
+            setRandomDelay();
         }
     }
 }

@@ -8,5 +8,10 @@ public class SwPointBean {
 
     public int width;
 
-    public int heigt;
+    public int height;
+
+    @Override
+    public String toString() {
+        return "(" + x + "," + y + ")" + ", （width = " + width + ", height = " + height + "）";
+    }
 }

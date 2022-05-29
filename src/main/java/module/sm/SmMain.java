@@ -123,6 +123,14 @@ public class SmMain {
         startTaskTenMonitor(true);
         //开启监听是否要点香的线程
         startFragranceMonitor(true);
+        //ctrl+A开启自动
+        AwtUtil.getRobot().keyPress(KeyEvent.CTRL_DOWN_MASK);
+        AwtUtil.setRandomDelay();
+        AwtUtil.getRobot().keyPress(KeyEvent.VK_A);
+        AwtUtil.setRandomDelay();
+        AwtUtil.getRobot().keyRelease(KeyEvent.CTRL_DOWN_MASK);
+        AwtUtil.setRandomDelay();
+        AwtUtil.getRobot().keyRelease(KeyEvent.VK_A);
     }
 
     /**
@@ -158,11 +166,13 @@ public class SmMain {
                 Color c = AwtUtil.getRobot().getPixelColor(ConstantScreen.FRAGRANCE_HAS_X, ConstantScreen.FRAGRANCE_HAS_Y);
                 if (c.getRed() == 82 && c.getGreen() == 81 && c.getBlue() == 97) {
                     System.out.println("已经点香了...");
-                    // 线程挂起
-                    try {
-                        mCondition.await();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    synchronized (SmMain.class) {
+                        // 线程挂起
+                        try {
+                            mCondition.await();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
                 Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.FRAGRANCE_X, ConstantScreen.FRAGRANCE_Y);
@@ -170,13 +180,16 @@ public class SmMain {
                         || (pixelColor.getRed() == 255 && pixelColor.getGreen() == 125 && pixelColor.getBlue() == 71)) {
                     AwtUtil.getRobot().mouseMove(ConstantScreen.FRAGRANCE_X, ConstantScreen.FRAGRANCE_Y);
                     AwtUtil.performLeftMouseClick(1);
-                    // 线程挂起
-                    try {
-                        mCondition.await();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    synchronized (SmMain.class) {
+                        // 线程挂起
+                        try {
+                            mCondition.await();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
+                ThreadPoolUtil.sleep(1000);
             }
         });
     }
@@ -205,11 +218,7 @@ public class SmMain {
                     System.out.println("Current task is the tenth...");
                     isTenthTask = true;
                 }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+      ThreadPoolUtil.sleep(500);
             }
         });
     }
@@ -242,11 +251,7 @@ public class SmMain {
                         lastCollectTime = System.currentTimeMillis();
                     }
                 }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+           ThreadPoolUtil.sleep(500);
             }
         });
     }
@@ -281,11 +286,7 @@ public class SmMain {
                         lastCatchPetTime = System.currentTimeMillis();
                     }
                 }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+             ThreadPoolUtil.sleep(500);
             }
         });
     }
@@ -306,96 +307,28 @@ public class SmMain {
      */
     private static void toCollect() {
         AwtUtil.getRobot().delay(1000);
-        AwtUtil.getRobot().mouseMove(ConstantScreen.TRADING_CENTER_X, ConstantScreen.TRADING_CENTER_Y);
-        AwtUtil.getRobot().delay(1000 + AwtUtil.mRandom.nextInt(500));
-        AwtUtil.performLeftMouseClick(1);
-        AwtUtil.getRobot().delay(2 * 1000 + AwtUtil.mRandom.nextInt(500));
-        //开始遍历需求的物资
-        if (hasThisMaterial() || startFindMaterials()) {     //找到物资，点击xx
-            AwtUtil.getRobot().mouseMove(ConstantScreen.CLOSE_BUY_MATERIALS_X, ConstantScreen.CLOSE_BUY_MATERIALS_Y);
-            AwtUtil.getRobot().delay(800 + AwtUtil.mRandom.nextInt(200));
-            AwtUtil.performLeftMouseClick(1);
+        if (!hasThisMaterial()) {
+            //开始遍历需求的物资
+          MaterialUtil.startFindMaterials();
         }
         SwPointBean canClickXy = findCanClickXy();
         AwtUtil.getRobot().mouseMove(canClickXy.x, canClickXy.y);
-        AwtUtil.getRobot().delay(1000 + AwtUtil.mRandom.nextInt(200));
         AwtUtil.performLeftMouseClick(2);
         continueTask();
     }
 
     /**
-     * ´
+     *
      * 身上本来就有
      */
     private static boolean hasThisMaterial() {
-        return false;
-    }
-
-    /**
-     * 开始遍历物资
-     */
-    private static boolean startFindMaterials() {
-        ScreenUtil.getScreenShot(ConstantScreen.COLLECT_MATERIALS_X, ConstantScreen.COLLECT_MATERIALS_Y,
-                ConstantScreen.COLLECT_MATERIALS_WIDTH, ConstantScreen.COLLECT_MATERIALS_HEIGHT, null);
-        SwPointBean swPointBean = ImageProcessingUtil.matchTemplate(DIR_RES + "source/need_materials.jpg", DIR_RES + "buffer/screenshot.jpg");
-        //确认下是否为需求
-        if (confirmNeed(swPointBean)) {
-            AwtUtil.getRobot().mouseMove(ConstantScreen.COLLECT_MATERIALS_X + swPointBean.x + 20, ConstantScreen.COLLECT_MATERIALS_Y + swPointBean.y + 20);
-            AwtUtil.getRobot().delay(800 + AwtUtil.mRandom.nextInt(200));
-            //选中物资
-            AwtUtil.performLeftMouseClick(1);
-            //移动到购买
-            AwtUtil.getRobot().mouseMove(ConstantScreen.BUY_MATERIALS_X, ConstantScreen.BUY_MATERIALS_Y);
-            AwtUtil.getRobot().delay(500 + AwtUtil.mRandom.nextInt(300));
-            //点击购买
-            AwtUtil.performLeftMouseClick(1);
-            ThreadPoolUtil.sleep(3000);
-            //判断是不是单价过高提示
-            Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.SURE_BUY_MATERIALS_X, ConstantScreen.SURE_BUY_MATERIALS_Y);
-            if (pixelColor.getRed() == 101 && pixelColor.getGreen() == 230 && pixelColor.getBlue() == 190) {
-                System.out.println("弹出单价过高提示...");
-                AwtUtil.getRobot().mouseMove(ConstantScreen.SURE_BUY_MATERIALS_X, ConstantScreen.SURE_BUY_MATERIALS_Y);
-                AwtUtil.getRobot().delay(200);
-                AwtUtil.performLeftMouseClick(1);
-            }
+        Color over1 = AwtUtil.getRobot().getPixelColor(ConstantScreen.COLLECT_MATERIALS_OVER1_X, ConstantScreen.COLLECT_MATERIALS_OVER1_Y);
+        Color over2 = AwtUtil.getRobot().getPixelColor(ConstantScreen.COLLECT_MATERIALS_OVER2_X, ConstantScreen.COLLECT_MATERIALS_OVER2_Y);
+        if (over1.getRed() == 0 && over1.getBlue() == 0 && over2.getRed() == 0 && over2.getBlue() == 0) {   //已完成
+            System.out.println("身上已经有了这个物资..." + over1 + over2);
             return true;
-        } else {
-            //没找到物资，点下一页
-            AwtUtil.getRobot().mouseMove(ConstantScreen.COLLECT_MATERIALS_NEXT_PAGE_X, ConstantScreen.COLLECT_MATERIALS_NEXT_PAGE_Y);
-            AwtUtil.getRobot().delay(800 + AwtUtil.mRandom.nextInt(200));
-            AwtUtil.performLeftMouseClick(1);
-            return startFindMaterials();
         }
-    }
-
-    /**
-     * 确认是否为需求
-     *
-     * @return
-     */
-    private static boolean confirmNeed(SwPointBean swPointBean) {
-        for (int i = ConstantScreen.COLLECT_MATERIALS_X + swPointBean.x; i < ConstantScreen.COLLECT_MATERIALS_X + swPointBean.x + 43; i++) {
-            for (int j = ConstantScreen.COLLECT_MATERIALS_Y + swPointBean.x; j < ConstantScreen.COLLECT_MATERIALS_Y + swPointBean.y + 43; j++) {
-                Color pixelColor = AwtUtil.getRobot().getPixelColor(i, j);
-                if (pixelColor.getRed() == 221 && pixelColor.getGreen() == 155 && pixelColor.getBlue() == 0) {
-                    Color anOtherPixel = AwtUtil.getRobot().getPixelColor(i + 7, j - 10);
-                    if (anOtherPixel.getRed() == 210 && anOtherPixel.getGreen() == 200 && anOtherPixel.getBlue() == 104) {  //确定是要买的物资
-                        System.out.println("找到物资，位置为：（" + i + "，" + j + ")");
-//                        //鼠标移动到物资上
-//                        AwtUtil.getRobot().mouseMove(i, j);
-//                        AwtUtil.getRobot().delay(500 + AwtUtil.mRandom.nextInt(300));
-//                        //选中物资
-//                        AwtUtil.performLeftMouseClick(2);
-//                        //移动到购买
-//                        AwtUtil.getRobot().mouseMove(ConstantScreen.BUY_MATERIALS_X, ConstantScreen.BUY_MATERIALS_Y);
-//                        AwtUtil.getRobot().delay(500 + AwtUtil.mRandom.nextInt(300));
-//                        //点击购买
-//                        AwtUtil.performLeftMouseClick(1);
-                        return true;
-                    }
-                }
-            }
-        }
+        System.out.println("身上已经没有这个物资..."+ over1 + over2);
         return false;
     }
 
@@ -426,16 +359,15 @@ public class SmMain {
                     ScreenUtil.getScreenShot(ConstantScreen.ROOT_X, ConstantScreen.ROOT_Y, 1024, 768, null);
                     SwPointBean swPointBean = ImageProcessingUtil.matchTemplate(DIR_RES + "source/enter_trading.jpg", DIR_RES + "buffer/screenshot.jpg");
                     //点击买宠物
-                    AwtUtil.getRobot().mouseMove(ConstantScreen.ROOT_X + swPointBean.x + swPointBean.width / 2, ConstantScreen.ROOT_Y + swPointBean.y + swPointBean.heigt / 2);  //
+                    AwtUtil.getRobot().mouseMove(ConstantScreen.ROOT_X + swPointBean.x + swPointBean.width / 2, ConstantScreen.ROOT_Y + swPointBean.y + swPointBean.height / 2);  //
                     AwtUtil.performLeftMouseClick(1);
                     //点击购买
-                    AwtUtil.getRobot().delay(AwtUtil.mRandom.nextInt(500));
                     AwtUtil.getRobot().mouseMove(ConstantScreen.BUY_BY_CREDIT_X, ConstantScreen.BUY_BY_CREDIT_Y);
                     AwtUtil.performLeftMouseClick(1);
                     mIsInTradingCenter = true;
                 }
+                ThreadPoolUtil.sleep(300);
             }
-            AwtUtil.getRobot().delay(AwtUtil.mRandom.nextInt(500) + 1000);
             AwtUtil.getRobot().mouseMove(ConstantScreen.CLOSE_CATCH_PET_X, ConstantScreen.CLOSE_CATCH_PET_Y);
             //关闭
             AwtUtil.performLeftMouseClick(1);
@@ -457,7 +389,7 @@ public class SmMain {
             if ((pixelColor.getRed() == 230 || (pixelColor.getRed() == 237)) && pixelColor.getGreen() == 252 && pixelColor.getBlue() == 254) {
                 isContinue = true;
             }
-            ThreadPoolUtil.sleep(500);
+            ThreadPoolUtil.sleep(200);
         }
         if (TASK_COLLECT.equals(CURRENT_TASK)) {
             //监听物资是否需要自己交1
@@ -473,30 +405,28 @@ public class SmMain {
                 ScreenUtil.getScreenShot(ConstantScreen.ROOT_X, ConstantScreen.ROOT_Y, 1024, 768, null);
                 SwPointBean swPointBean = ImageProcessingUtil.matchTemplate(DIR_RES + "source/report_collect.jpg", DIR_RES + "buffer/screenshot.jpg");
                 //点击继续任务
-                AwtUtil.getRobot().mouseMove(ConstantScreen.ROOT_X + swPointBean.x + swPointBean.width / 2, ConstantScreen.ROOT_Y + swPointBean.y + swPointBean.heigt / 2);  //
+                AwtUtil.getRobot().mouseMove(ConstantScreen.ROOT_X + swPointBean.x + swPointBean.width / 2, ConstantScreen.ROOT_Y + swPointBean.y + swPointBean.height / 2);  //
                 AwtUtil.performLeftMouseClick(1);
-                needSendBySelf();
+                MaterialUtil.needSendBySelf();
             }
             //监听物资是否需要自己交2
             Color c = AwtUtil.getRobot().getPixelColor(ConstantScreen.SEND_MATERIALS_X, ConstantScreen.SEND_MATERIALS_Y);
             if ((c.getRed() == 230 || (c.getRed() == 237)) && c.getGreen() == 252 && c.getBlue() == 254) {
                 //需要自己交
-                needSendBySelf();
+               MaterialUtil.needSendBySelf();
             }
         }
-        AwtUtil.getRobot().delay(1000 + AwtUtil.mRandom.nextInt(1000));
         ScreenUtil.getScreenShot(ConstantScreen.ROOT_X, ConstantScreen.ROOT_Y, 1024, 768, null);
         SwPointBean swPointBean = ImageProcessingUtil.matchTemplate(DIR_RES + "source/continue_task.jpg", DIR_RES + "buffer/screenshot.jpg");
         //点击继续任务
-        AwtUtil.getRobot().mouseMove(ConstantScreen.ROOT_X + swPointBean.x + swPointBean.width / 2, ConstantScreen.ROOT_Y + swPointBean.y + swPointBean.heigt / 2);  //
+        AwtUtil.getRobot().mouseMove(ConstantScreen.ROOT_X + swPointBean.x + swPointBean.width / 2, ConstantScreen.ROOT_Y + swPointBean.y + swPointBean.height / 2);  //
         AwtUtil.performLeftMouseClick(1);
-        AwtUtil.getRobot().delay(1000 + AwtUtil.mRandom.nextInt(500));
         //关闭桌面遮挡
-        Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_X, ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_Y);
-        if ((pixelColor.getRed() == 230 || (pixelColor.getRed() == 237)) && pixelColor.getGreen() == 252 && pixelColor.getBlue() == 254) {
+//        Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_X, ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_Y);
+//        if ((pixelColor.getRed() == 230 || (pixelColor.getRed() == 237)) && pixelColor.getGreen() == 252 && pixelColor.getBlue() == 254) {
             AwtUtil.getRobot().mouseMove(ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_X, ConstantScreen.TRADING_CENTER_NEED_PET_CLOSE_Y);
             AwtUtil.performLeftMouseClick(2);
-        }
+//        }
         if (mIsNeedChange) {
             synchronized (SmMain.class) {
                 mCntAccount++;
@@ -520,57 +450,12 @@ public class SmMain {
     }
 
     /**
-     * 需要自己交物资
-     */
-    private static void needSendBySelf() {
-        //先点击一下背包1
-        AwtUtil.getRobot().mouseMove(ConstantScreen.PACKAGE1_ENTER_X, ConstantScreen.PACKAGE1_ENTER_Y);
-        AwtUtil.performLeftMouseClick(1);
-        //一个个点过去
-        clickAllPackage();
-        //翻页点
-        AwtUtil.getRobot().mouseMove(ConstantScreen.PACKAGE2_ENTER_X, ConstantScreen.PACKAGE2_ENTER_Y);
-        AwtUtil.performLeftMouseClick(1);
-        //一个个点过去
-        clickAllPackage();
-        boolean isSendEnd = false;
-        while (!isSendEnd) {
-            Color pixelColor = AwtUtil.getRobot().getPixelColor(ConstantScreen.SEND_MATERIALS_HAS_CLICK_X, ConstantScreen.SEND_MATERIALS_HAS_CLICK_Y);
-            if (pixelColor.getRed() != 113 && pixelColor.getGreen() != 187 && pixelColor.getBlue() != 166) {
-                AwtUtil.getRobot().mouseMove(ConstantScreen.SEND_SURE_X, ConstantScreen.SEND_SURE_Y);
-                AwtUtil.performLeftMouseClick(1);
-                isSendEnd = true;
-            }
-        }
-    }
-
-    private static void clickAllPackage() {
-        int cntNoUse = 0;
-        for (int i = ConstantScreen.PACKAGE_START_X; i < ConstantScreen.PACKAGE_START_X + 48 * 5; i = i + 48) {
-            for (int j = ConstantScreen.PACKAGE_START_Y; j < ConstantScreen.PACKAGE_START_Y + 48 * 8; j = j + 48) {
-                Color pixelColor = AwtUtil.getRobot().getPixelColor(i, j);
-                if (pixelColor.getRed() == 85 && pixelColor.getGreen() == 143 && pixelColor.getBlue() == 147) {
-                    System.out.println("处于背包的不可点击的地方... return");
-                    cntNoUse++;
-                    i = i + 48;
-                    j = ConstantScreen.PACKAGE_START_Y;
-                    if (cntNoUse == 5) {
-                        return;
-                    }
-                }
-                AwtUtil.getRobot().mouseMove(i, j);
-                AwtUtil.performLeftMouseClick(1);
-            }
-
-        }
-    }
-
-    /**
      * 找到可以点击的点
      *
      * @return
      */
     private static SwPointBean findCanClickXy() {
+        System.out.println("开始遍历可点击的任务区域...");
         SwPointBean swPointBean = new SwPointBean();
         for (int i = ConstantScreen.TASK_FIND_X; i < ConstantScreen.TASK_FIND_X + ConstantScreen.TASK_FIND_WIDTH; i++) {
             for (int j = ConstantScreen.TASK_FIND_Y; j < ConstantScreen.TASK_FIND_Y + ConstantScreen.TASK_FIND_HEIGHT; j++) {
@@ -582,6 +467,7 @@ public class SmMain {
                         && pixelColor.getBlue() >= 223 && pixelColor.getBlue() <= 243) {
                     swPointBean.x = i;
                     swPointBean.y = j;
+                    System.out.println("可点击的任务区域:"+swPointBean + "...");
                     return swPointBean;
                 }
             }
@@ -619,11 +505,7 @@ public class SmMain {
                         lastChallengeTime = System.currentTimeMillis();
                     }
                 }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+              ThreadPoolUtil.sleep(500);
             }
         });
     }
@@ -634,11 +516,7 @@ public class SmMain {
             boolean addHead = true;
             SwTaskPointhelper swTaskPointhelper = new SwTaskPointhelper();
             while (isCollect) {
-                try {
-                    Thread.sleep(800);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+             ThreadPoolUtil.sleep(500);
                 swTaskPointhelper.inputMsgToFile(x, y, fileName, addHead);
                 addHead = false;
             }
@@ -665,17 +543,13 @@ public class SmMain {
                             System.out.println("mousse press...");
                         }
                     }
-                    try {
-                        Thread.sleep(new Random().nextInt(100) + 100);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                  ThreadPoolUtil.sleep(200);
                 }
             }
         });
 
         for (int i = 0; i < pointBean.width * 2; i = i + 2) {
-            for (int j = 0; j < pointBean.heigt * 2; j = j + 2) {
+            for (int j = 0; j < pointBean.height * 2; j = j + 2) {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {

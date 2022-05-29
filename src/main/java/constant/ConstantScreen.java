@@ -6,8 +6,8 @@ public class ConstantScreen {
      * 游戏关闭按钮处的坐标
      * 关闭按钮的中心偏右下的点
      */
-    public static final int ROOT_X = 758;
-    public static final int ROOT_Y = 62;
+    public static final int ROOT_X = 764;
+    public static final int ROOT_Y = 113;
 
     /**
      * 切换角色
@@ -94,6 +94,10 @@ public class ConstantScreen {
 
     public static final int COLLECT_MATERIALS_NEXT_PAGE_X = ROOT_X + 506;
     public static final int COLLECT_MATERIALS_NEXT_PAGE_Y = ROOT_Y + 554;
+    public static final int COLLECT_MATERIALS_OVER1_X = ROOT_X + 920;
+    public static final int COLLECT_MATERIALS_OVER1_Y = ROOT_Y + 189;
+    public static final int COLLECT_MATERIALS_OVER2_X = ROOT_X + 921;
+    public static final int COLLECT_MATERIALS_OVER2_Y = ROOT_Y + 196;
 
     /**
      * 购买物资
@@ -177,31 +181,25 @@ public class ConstantScreen {
     public static final int CLOSE_CATCH_PET_X = ROOT_X + 749;
     public static final int CLOSE_CATCH_PET_Y = ROOT_Y + 189;
 
-    /**
-     * 游戏任务坐标
-     */
-    public static final int ROOT_TASK_X = ROOT_X + 791;
-    public static final int ROOT_TASK_Y = ROOT_Y + 755;
 
-    public static final int SW_WINDOW_X = 112;
-    public static final int SW_WINDOW_Y = 15;
-    public static final int SW_WINDOW_WIDTH = 1024;
-    public static final int SW_WINDOW_HEIGHT = 768;
-
+//========================================修炼=======================================================
     /**
-     * 继续任务
+     * 日程
      */
-    public static final int SHOT_X_CONTINUE_TASK = ROOT_X + 384;
-    public static final int SHOT_Y_CONTINUE_TASK = ROOT_Y + 467;
-    public static final int CONTINUE_TASK_WIDTH = 112;
-    public static final int CONTINUE_TASK_HEIGHT = 15;
+    public static final int SCHEDULE_X = ROOT_X + 1;
+    public static final int SCHEDULE_Y = ROOT_Y + 135;
+
+    public static final int SCHEDULE_TASK_X = ROOT_X + 168;
+    public static final int SCHEDULE_TASK_Y = ROOT_Y + 193;
+
+    public static final int CLOSE_SCHEDULE_TASK_X = ROOT_X + 871;
+    public static final int CLOSE_SCHEDULE_TASK_Y = ROOT_Y + 143;
 
     /**
-     * 抓宠物
+     * 遍历修炼的范围
      */
-    private static final int SHOT_X_CATCH_PET = ROOT_X + 801;
-    private static final int SHOT_Y_CATCH_PET = ROOT_Y + 184;
-    private static final int CATCH_PET_WIDTH = 120;
-    private static final int CATCH_PET_OK_WIDTH = 161;
-    private static final int CATCH_PET_HEIGHT = 15;
+    public static final int PRACTICE_FIND_X = ROOT_X + 791;
+    public static final int PRACTICE_FIND_Y = ROOT_Y + 219;
+    public static final int PRACTICE_FIND_WIDTH = 198;
+    public static final int PRACTICE_FIND_HEIGHT = 16;
 }

@@ -1,3 +1,4 @@
+import module.practice.PracticeMain;
 import module.sell.SellMain;
 import module.sm.SmMain;
 import utils.AwtUtil;
@@ -22,12 +23,17 @@ public class SwPluginMainApp {
     /**
      * 做师门开光
      */
-    private static boolean mIsDoSm = true;
+    private static boolean mIsDoSm = false;
+
+    /**
+     * 做修炼开光
+     */
+    private static boolean mIsDoPractice = true;
 
     /**
      * 获取屏幕坐标点
      */
-    private static boolean mIsShowCurrentPoint = true;
+    private static boolean mIsShowCurrentPoint = false;
 
     public static void main(String[] args) {
         //init robot
@@ -40,6 +46,14 @@ public class SwPluginMainApp {
         showCurrentPoint();
         //做师门
         doSm();
+        //修炼
+        practice();
+    }
+
+    private static void practice() {
+        ThreadPoolUtil.getInstance().execute(() -> {
+            if(mIsDoPractice) PracticeMain.start();
+        });
     }
 
     /**
@@ -60,6 +74,7 @@ public class SwPluginMainApp {
                 while (true) {
                     try {
                         Thread.sleep(800);
+//                        ScreenUtil.getScreenShot(1148,547,121,14,null);
                         //获取鼠标坐标点
                         ScreenUtil.getPointInfo();
                     } catch (InterruptedException e) {
