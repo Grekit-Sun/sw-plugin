@@ -9,12 +9,13 @@ public class MaterialUtil {
 
     private static final String DIR_RES = "/Users/sun/dev/00_IDEA/workspace/sw-plugin/src/main/resources/";
 
-
+    private static boolean mIsFirstIn = true;
 
     /**
      * 开始遍历物资
      */
     public static boolean startFindMaterials() {
+        mIsFirstIn = true;
         while (startFind(false)) {
             ThreadPoolUtil.sleep(500);
         }
@@ -33,8 +34,9 @@ public class MaterialUtil {
             SwPointBean rs = ImageProcessingUtil.matchTemplate(DIR_RES + "source/need.jpg", DIR_RES + "buffer/screenshot.jpg");
             Color pc = AwtUtil.getRobot().getPixelColor(ConstantScreen.ROOT_X + rs.x + 10, ConstantScreen.ROOT_Y + rs.y + 4);
             System.out.println("" + (ConstantScreen.ROOT_X + rs.x + 10) + "," + ( ConstantScreen.ROOT_Y + rs.y + 4) + pc);
-            if(pc.getRed() == 214 && pc.getGreen() == 146 && pc.getBlue() == 32){
+            if(mIsFirstIn || (pc.getRed() == 214 && pc.getGreen() == 146 && pc.getBlue() == 32)){
                 System.out.println("需要购买...");
+                mIsFirstIn = false;
             }else {
                 System.out.println("不需要购买...");
                 System.out.println("点击xx...");
