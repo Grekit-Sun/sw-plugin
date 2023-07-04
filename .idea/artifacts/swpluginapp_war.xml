@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="swpluginapp:war">
+    <output-path>$PROJECT_DIR$/swpluginapp/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>swpluginapp</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="swpluginapp-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="swpluginapp:war exploded" />
+    </root>
+  </artifact>
+</component>

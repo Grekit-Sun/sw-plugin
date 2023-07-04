@@ -31,6 +31,9 @@ public class ConstantSaleWord {
             mTellInfoList.clear();
         }
 
+//        mTellInfoList.add(KeyEvent.VK_UP);
+//        mTellInfoList.add(KeyEvent.VK_ENTER);
+
         mTellInfoList.add(KeyEvent.VK_3);
         mTellInfoList.add(KeyEvent.VK_PERIOD);
         mTellInfoList.add(KeyEvent.VK_5);
@@ -50,7 +53,7 @@ public class ConstantSaleWord {
         mTellInfoList.add(KeyEvent.VK_SPACE);
         mTellInfoList.add(KeyEvent.VK_SPACE);
         mTellInfoList.add(KeyEvent.VK_COMMA);
-
+//
         mTellInfoList.add(KeyEvent.VK_W);
         mTellInfoList.add(KeyEvent.VK_E);
         mTellInfoList.add(KeyEvent.VK_I);
@@ -66,6 +69,29 @@ public class ConstantSaleWord {
         mTellInfoList.add(KeyEvent.VK_3);
         mTellInfoList.add(KeyEvent.VK_4);
         mTellInfoList.add(KeyEvent.VK_9);
+
+        mTellInfoList.add(KeyEvent.VK_SPACE);
+        mTellInfoList.add(KeyEvent.VK_COMMA);
+
+        mTellInfoList.add(KeyEvent.VK_OPEN_BRACKET);
+        mTellInfoList.add(KeyEvent.VK_Z);
+        mTellInfoList.add(KeyEvent.VK_I);
+        mTellInfoList.add(KeyEvent.VK_D);
+        mTellInfoList.add(KeyEvent.VK_O);
+        mTellInfoList.add(KeyEvent.VK_N);
+        mTellInfoList.add(KeyEvent.VK_G);
+        mTellInfoList.add(KeyEvent.VK_SPACE);
+
+        mTellInfoList.add(KeyEvent.VK_X);
+        mTellInfoList.add(KeyEvent.VK_I);
+        mTellInfoList.add(KeyEvent.VK_A);
+        mTellInfoList.add(KeyEvent.VK_O);
+        mTellInfoList.add(KeyEvent.VK_X);
+        mTellInfoList.add(KeyEvent.VK_I);
+        mTellInfoList.add(KeyEvent.VK_SPACE);
+
+        mTellInfoList.add(KeyEvent.VK_CLOSE_BRACKET);
+        mTellInfoList.add(KeyEvent.VK_SPACE);
         mTellInfoList.add(KeyEvent.VK_ENTER);
     }
 
@@ -76,6 +102,10 @@ public class ConstantSaleWord {
         if (mSaleWordList.size() > 0) {
             mSaleWordList.clear();
         }
+//        向上
+//        mSaleWordList.add(KeyEvent.VK_UP);
+//        mSaleWordList.add(KeyEvent.VK_ENTER);
+
 
         mSaleWordList.add(KeyEvent.VK_X);
         mSaleWordList.add(KeyEvent.VK_U);

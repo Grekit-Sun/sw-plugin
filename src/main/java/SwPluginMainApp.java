@@ -9,7 +9,7 @@ import static org.opencv.core.Core.NATIVE_LIBRARY_NAME;
 
 /**
  * Description：
- *
+ *xuyao
  * @data:2022/5/14 下午1:49
  * @author: ZhengXiang Sun
  */
@@ -18,7 +18,7 @@ public class SwPluginMainApp {
     /**
      * 世界喊话开关
      */
-    private static boolean mIsSaleOnTheWorld = false;
+    private static boolean mIsSaleOnTheWorld = true;
 
     /**
      * 做师门开光
@@ -28,7 +28,7 @@ public class SwPluginMainApp {
     /**
      * 做修炼开光
      */
-    private static boolean mIsDoPractice = true;
+    private static boolean mIsDoPractice = false;
 
     /**
      * 获取屏幕坐标点
